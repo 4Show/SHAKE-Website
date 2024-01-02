@@ -1,0 +1,314 @@
+body {
+    font-family: 'Georgia', 'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f4eb;
+    color: #333;
+  }
+  
+  header {
+    background-color: #e84946;
+    color: #fff;
+    padding: 1em;
+    text-align: center;
+  }
+
+  header img{
+      height: 20%;
+      height: 20%;
+  }
+  
+  header h3 {
+
+    background-color: transparent;
+    color: black
+  }
+
+
+  nav {
+    background-color: #2b2b2b;
+    color: #fff;
+    text-align: center;
+    padding: 1em 0;
+  }
+  
+  nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  nav li {
+    display: inline-block;
+    margin-right: 20px;
+  }
+  
+  nav a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  nav a:hover {
+    color: #e84946;
+  }
+
+  .video-section{
+    margin-top: 20px;
+  }
+  
+  .submenu {
+    display: none;
+    position: absolute;
+    background-color: #2b2b2b;
+  }
+  
+  .submenu li {
+    display: block;
+  }
+  
+  .submenu a {
+    padding: 10px;
+  }
+  
+  #home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2em;
+  }
+  
+  .product-scroll {
+    display: inline-flexbox;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .product-item {
+    margin-bottom: 40px;
+    display: inline-flex;
+    align-items: stretch;
+    margin-top: 40px;
+  }
+  
+  .product-item img {
+    width: 60%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .product-details {
+    margin-top: 10px;
+    text-align: right;
+    flex-grow: 1;
+    padding-left: 20px; /* Add padding to the left of product details */
+    overflow-wrap: break-word;
+    display: inline-block;
+    width: 40%;
+    height: auto;
+  }
+  
+  .price {
+    color: #e84946;
+  }
+  
+  .add-to-cart {
+    background-color: #e84946;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  .PictureContainer img{
+    padding: 500px;
+  }
+  
+  .filter-section {
+    text-align: right; /* Right-align the filter section */
+    margin-bottom: 20px; /* Add some space under the filter section */
+  }
+  
+  select {
+    padding: 5px;
+  }
+
+  .centered-image {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .centered-image img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  
+  section {
+    padding: 2em;
+  }
+  
+
+
+  footer h4 {
+    text-align: center;
+    background-color: black;
+    height: 20px;
+    width: 100%;
+  }
+
+  footer img {
+    text-align: left;
+    height: 50%;
+    width: 50%;
+  }
+
+  footer {
+    background-color: #2b2b2b;
+    color: #fff;
+    padding: 1em;
+  
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footerDiv{
+    display: inline-block;
+    background-color: inherit;
+  }
+  
+  .left-section{
+    background-color: inherit;
+    float: left;
+    text-align: center;
+    width: 70%;
+    height: auto;
+  }
+  .left-section img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .right-section {
+    flex-direction: column;
+    align-items: flex-end;
+    float: right;
+    background-color: inherit;
+    width: 30%;
+    height: auto;
+    margin-top: 10px;
+    
+    
+  }
+
+  .follow{
+    text-align: left;
+  }
+  
+  .follow-us a {
+    margin-right: 10px;
+    display: inline-block;
+    text-align: left;
+    width: 20%;
+    height: auto;
+    margin-top: 20px;
+  }
+  
+  .subscribe {
+    margin-top: 0.4in;
+  }
+  
+  .subscribe label,
+  .subscribe input,
+  .subscribe button {
+    display: block;
+    margin-bottom: 10px;
+    
+  }
+  
+  
+  form {
+    margin-top: 20px;
+  }
+  
+  form label,
+  form input,
+  form textarea,
+  form button {
+    display: block;
+    margin-bottom: 10px;
+    
+  }
+  
+
+  .about {
+    display: inline-block;
+   }
+ 
+   .about div{
+     display: inline-block;
+     text-align: center;
+     padding: 30px;
+   }
+ 
+   .about div img{
+     text-align: center;
+     padding: 30px;
+   }
+
+   .contactDiv{
+    
+   }
+
+   .formDiv form{
+    
+   }
+
+  .contact-form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .formDiv {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .formDiv form{
+    display: inline-block;
+   
+  }
+
+  .cart-icon {
+    cursor: pointer;
+    font-size: 20px;
+    float: right;
+    color: black;
+  }
+
+  /* Add this CSS to your existing styles */
+.sizeButtons button {
+  /* your existing styles for size buttons */
+  background-color: #e84946; /* Set the default background color */
+  color: #fff;
+  
+}
+
+.size-buttons button.highlight {
+  /* Highlight styles */
+  background-color: #ff0000; /* Red or your theme color */
+}
+
+.size button.onclick{
+  
+}

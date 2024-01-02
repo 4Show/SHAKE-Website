@@ -1,0 +1,60 @@
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show/Hide Sections</title>
+    <style>
+        .page-section {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Main Page</h1>
+
+    <ul>
+        <li><a href="#page1" onclick="showSection('page1')">Page 1</a></li>
+        <li><a href="#page2" onclick="showSection('page2')">Page 2</a></li>
+        <!-- Add more links as needed -->
+    </ul>
+
+    <!-- Page 1 Content -->
+    <div id="page1" class="page-section">
+        <h2>Page 1</h2>
+        <p>This is the content of Page 1.</p>
+        <!-- You can add more content here -->
+    </div>
+
+    <!-- Page 2 Content -->
+    <div id="page2" class="page-section">
+        <h2>Page 2</h2>
+        <p>This is the content of Page 2.</p>
+        <!-- You can add more content here -->
+    </div>
+
+    <!-- Add more pages as needed -->
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            var sections = document.querySelectorAll('.page-section');
+            sections.forEach(function(section) {
+                section.classList.remove('active');
+            });
+
+            // Show the clicked section
+            var activeSection = document.getElementById(sectionId);
+            activeSection.classList.add('active');
+        }
+    </script>
+
+</body>
+</html>
