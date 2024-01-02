@@ -1,60 +1,196 @@
-html
-Copy code
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Show/Hide Sections</title>
-    <style>
-        .page-section {
-            display: none;
-        }
 
-        .active {
-            display: block;
-        }
-    </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../CSS/HomePageStyle.css">
+  <title>SHAKE - Luxury Streetwear</title>
+  <script src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Java/script.js"></script>
 </head>
+
 <body>
 
-    <h1>Main Page</h1>
+  <header>
+    <div>
+      <img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/SHK-Logo.png" alt="SHK Logo">
+      <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount">0</span></div>
+    </div>
+    <h3>Start Hustling And Kill Everything</h3>
+    
+  </header>
 
+  <nav>
     <ul>
-        <li><a href="#page1" onclick="showSection('page1')">Page 1</a></li>
-        <li><a href="#page2" onclick="showSection('page2')">Page 2</a></li>
-        <!-- Add more links as needed -->
+      <li><a href="#">Home</a></li>
+      <li><a href="/Users/mastercolen/Desktop/Business/Website/Shake Website/HTML/Shop-SHAKE.html">Shop</a>
+        <ul class="submenu">
+          <li><a href="#">Men</a></li>
+          <li><a href="#">Women</a></li>
+        </ul>
+      </li>
+      <li><a href="/Users/mastercolen/Desktop/Business/Website/Shake Website/HTML/About-SHAKE.html">About Us</a></li>
+      <li><a href="/Users/mastercolen/Desktop/Business/Website/Shake Website/HTML/Contact-SHAKE.html">Contact</a></li>
     </ul>
+  </nav>
+ 
+  
+   <!-- Video Section -->
+  <section id="video-section">
+    <video width="100%" height="400" autoplay muted loop>
+      <source src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/Icecream.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </section>
 
-    <!-- Page 1 Content -->
-    <div id="page1" class="page-section">
-        <h2>Page 1</h2>
-        <p>This is the content of Page 1.</p>
-        <!-- You can add more content here -->
+
+  <section id="home">
+    <div class="filter-section">
+      <label for="sort">Sort by:</label>
+      <select id="sort">
+        <option value="default">Default</option>
+        <option value="name-asc">A-Z</option>
+        <option value="name-desc">Z-A</option>
+        <option value="date-newest">Newest</option>
+        <option value="date-oldest">Oldest</option>
+        <option value="price">Price</option>
+      </select>
     </div>
 
-    <!-- Page 2 Content -->
-    <div id="page2" class="page-section">
-        <h2>Page 2</h2>
-        <p>This is the content of Page 2.</p>
-        <!-- You can add more content here -->
-    </div>
+    <div class="product-scroll">
+      <!-- Product 1 -->
+      <div class="product-item">
+        <img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/WhatsInYourCup_Purple.png" alt="Product 1">
+        <div class="product-details">
+          <h3>What's In Your Cup (Panther Edition)</h3>
+          <p>"Dribble down memory lane with the Purple Panthers Edition of the "What's In Your Cup" Tee—a nostalgic tribute to the basketball team that forged bonds and created lasting memories. This limited edition release is not just a shirt; it's a piece of history wrapped in purple hues."</p>
+          <p class="price">$49.99</p>
+          <div class="size-buttons">
+            <button onclick="highlightSize(this)">XS</button>
+            <button onclick="highlightSize(this)">S</button>
+            <button onclick="highlightSize(this)">M</button>
+            <button onclick="highlightSize(this)">L</button>
+            <button onclick="highlightSize(this)">XL</button>
+            <button onclick="highlightSize(this)">XXL</button>
+          </div>
+          <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+        </div>
+      </div>
 
-    <!-- Add more pages as needed -->
+      <!-- Add more product items as needed -->
 
-    <script>
-        function showSection(sectionId) {
-            // Hide all sections
-            var sections = document.querySelectorAll('.page-section');
-            sections.forEach(function(section) {
-                section.classList.remove('active');
-            });
+      <!-- Product 2 -->
+      <div class="product-item">
+        <img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/PrettyGirlsLoveHustlers_Black.png" alt="Product 2">
+        <div class="product-details">
+          <h3>Pretty Girls Love Hustlers Jacket</h3>
+          <p>"Crafted with precision and style, this jacket merges urban aesthetics with luxurious details. The bold statement "Pretty Girls Love Hustlers" across the front is a conversation starter and a reminder that success is irresistibly attractive."</p>
+          <p class="price">$49.99</p>
+          <div class="size-buttons">
+            <button onclick="highlightSize(this)">XS</button>
+            <button onclick="highlightSize(this)">S</button>
+            <button onclick="highlightSize(this)">M</button>
+            <button onclick="highlightSize(this)">L</button>
+            <button onclick="highlightSize(this)">XL</button>
+            <button onclick="highlightSize(this)">XXL</button>
+          </div>
+          <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+        </div>
+      </div>
 
-            // Show the clicked section
-            var activeSection = document.getElementById(sectionId);
-            activeSection.classList.add('active');
-        }
-    </script>
+      <!-- Product 3 -->
+      <div class="product-item">
+        <img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/Rosa_Black.png" alt="Product 3">
+        <div class="product-details">
+          <h3>Black History Tee</h3>
+          <p>"Rosa Parks, a beacon of courage, made history by taking a seat that echoed around the world. This tee honors her legacy, inviting you to wear the symbol of resistance and perseverance proudly."</p>
+          <p class="price">$34.99</p>
+          <div class="size-buttons">
+            <button onclick="highlightSize(this)">XS</button>
+            <button onclick="highlightSize(this)">S</button>
+            <button onclick="highlightSize(this)">M</button>
+            <button onclick="highlightSize(this)">L</button>
+            <button onclick="highlightSize(this)">XL</button>
+            <button onclick="highlightSize(this)">XXL</button>
+          </div>
+          <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+        </div>
+      </div>
 
-</body>
+      <!-- Product 4 -->
+      <div class="product-item">
+        <img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/WhatsInYourCup_Orange.png" alt="Product 4">
+        <div class="product-details">
+          <h3>What's In Your Cup (Orange)</h3>
+          <p>""Inspired by the camaraderie of good times and endless laughter, "What's In Your Cup" is more than just a saying; it's a philosophy. As friends, we ask each other this question to ensure no cup is left empty, symbolizing a commitment to celebration, connection, and living life to the fullest.""</p>
+          <p class="price">$49.99</p>
+          <div class="size-buttons">
+            <button onclick="highlightSize(this)">XS</button>
+            <button onclick="highlightSize(this)">S</button>
+            <button onclick="highlightSize(this)">M</button>
+            <button onclick="highlightSize(this)">L</button>
+            <button onclick="highlightSize(this)">XL</button>
+            <button onclick="highlightSize(this)">XXL</button>
+          </div>
+          <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+        </div>
+      </div>
+
+      <!-- Product 5
+      <div class="product-item">
+        <div class="PictureContainer"><img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/wintergreen_Shake_crewneck.png" alt="Product 5"></div>
+        <div class="product-details">
+          <h3>Wintergreen Shake Crewneck</h3>
+          <p>"Draped in a soothing wintergreen hue, this crewneck captures the essence of the season. The color palette echoes frosty mornings and evergreen landscapes, making it a visual treat for the winter enthusiast."</p>
+          <p class="price">$69.99</p>
+          <div class="size-buttons">
+            <button>XS</button>
+            <button>S</button>
+            <button>M</button>
+            <button>L</button>
+            <button>XL</button>
+            <button>XXL</button>
+          </div>
+          <button class="add-to-cart">Add to Cart</button>
+        </div>
+      </div> -->
+
+      </section>
+
+      <footer>
+        <h4>&copy; 2018 SHAKE - Luxury Streetwear. All rights reserved.</h4>
+        
+        <div class="footerDiv">
+          <div class="left-section">
+            <img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/HustlersConceptTag.png" alt="Transparent Image"  width="50%">
+          </div>
+        
+          
+          <div class="right-section">
+            <div class="follow-us">
+              <h3 class="follow">Follow us:</h3>
+              <div>
+                <a href="https://www.instagram.com/shk_shake" target="_blank"><img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/instagram.png" alt="Instagram"></a>
+                <a href="#" target="_blank"><img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/twitter_logo.png" alt="Twitter"></a>
+                <a href="#" target="_blank"><img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/tiktok_logo.png" alt="TikTok"></a>
+                <a href="#" target="_blank"><img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/facebook_logo.png" alt="Facebook"></a>
+              </div>
+
+            </div>
+        
+            <div class="subscribe">
+              <label for="email">Subscribe to our newsletter:</label>
+              <input type="email" id="email" name="email" placeholder="Your email">
+              <label for="phone">Subscribe via phone:</label>
+              <input type="tel" id="phone" name="phone" placeholder="Your phone number">
+              <button type="submit">Subscribe</button>
+            </div>
+          </div>
+
+        </div>
+    
+        
+      </footer>
+      <script src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Java/script.js"></script>
+</body>   
 </html>
