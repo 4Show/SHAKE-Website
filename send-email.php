@@ -1,4 +1,19 @@
-<!DOCTYPE html>
+<?php
+// isset($_POST['$email']) && ($_POST['$email'] != "") && isset($_POST['$name']) && ($_POST['$name'] != "") && isset($_POST['$message']) && ($_POST['$message'])!= "" 
+if(!empty($_POST["send"])){
+    $name = $_POST["name"];
+    $email = $_POST["email"];
+    $message = $_POST["message"];
+
+    $headers = "Name: " .$user. "\r\n";
+    $recipient = "4showinvestments@gmail.com";
+
+    $message_sent= mail($recipient,"SHAKE Support", $message, $headers);
+   
+    
+}
+?>
+
 <html lang="en">
 
 <head>
@@ -35,7 +50,14 @@
   </nav>
  
 
+    <?php
+        if($message_sent != false):
+    ?>
+        <!-- display contact form with success message -->
 
+    <?php
+        else:
+    ?>
   
     <div class = "contact-form-container">
         <div class = "formDiv">
@@ -58,13 +80,12 @@
         </div>
 
     </div>
-
+    <?php
+        endif;
+    ?>
   
 
 </body>
-
-
-
 
 
 <footer>
