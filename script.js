@@ -1,11 +1,10 @@
-cartCount = 0;
+const cartCount = 0;
 
-function toggleCart() 
+function toggleCart(cartNode, productItem) 
 {
-  // Add your logic to show/hide the cart or navigate to the cart page
-  // For now, let's just increment the cart count
-  cartCount++;
-  document.getElementById('cartCount').innerText = cartCount;
+    
+    window.location.href = '';
+
 }
 
 
@@ -17,7 +16,8 @@ function goToCartPage()
 
 // this function will take care of the actions associated with submitting the contact form
 // on the contact page
-function submitContactForm() {
+function submitContactForm() 
+{
 
     var formData = new FormData(document.getElementById("contactForm"));
 
@@ -32,36 +32,45 @@ function submitContactForm() {
         }
     };
     xhr.send(formData);
-     
-}
+}  
 
-function isAnySizeHighlighted(product) {
-    // Get the size buttons container for the specified product
-    const sizeButtonsContainer = document.querySelector(`.size-buttons[data-product="${product}"]`);
+//when the button is clicked within the specific product item
+//I want the background color of the button to change to red
+function highlightSize(selectedButton, productName) 
+{
 
-    // Check if any size button is highlighted
-    const highlightedSize = sizeButtonsContainer.querySelector('.highlight');
+    //select the product item you are currently under ot identify the right information to send
+    var product = document.getElementById(productName);
+    //get the buttons under this element
+    var buttons = product.querySelectorAll("button");
     
-    // Return true if any size button is highlighted, otherwise return false
-    return !!highlightedSize;
+    // Remove "highlighted" class from all buttons
+    buttons.forEach(btn => btn.classList.remove('.highlighted'));
+
+    // Add "highlighted" class to the selected button
+    buttons[selectedButton - 1].classList.add('.highlighted');
+}    
+
+//SELECTS THE correct size button for each product
+function highlightButton(label) 
+{
+    // Remove "active" class from all buttons in the same group
+    const group = label.parentElement;
+    const buttons = group.getElementsByClassName('button-label');
+    for (const button of buttons) {
+      button.classList.remove('active');
+    }
+
+    // Add "active" class to the clicked button
+    label.classList.add('active');
 }
 
-
-function highlightSize(button, product, size) {
-    // Toggle the 'highlight' class for the clicked button
-    button.classList.toggle('highlight');
-
-    // You can now use the 'size' parameter to get the selected size
-    console.log('Product: ' + product + ', Selected Size: ' + size);
-
-    
-}
-
-function showSection(sectionId) {
+function showSection(sectionId) 
+{
     // Hide all sections
     var sections = document.querySelectorAll('.page-section');
     sections.forEach(function(section) {
-        section.classList.remove('active');
+        section.classList.stle.backgroundColor = "white";
     });
 
     // Show the clicked section

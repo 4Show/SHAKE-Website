@@ -258,13 +258,6 @@ body {
      padding: 30px;
    }
 
-   .contactDiv{
-    
-   }
-
-   .formDiv form{
-    
-   }
 
   .contact-form-container {
     display: flex;
@@ -296,19 +289,33 @@ body {
     color: black;
   }
 
-  /* Add this CSS to your existing styles */
-.sizeButtons button {
-  /* your existing styles for size buttons */
-  background-color: #e84946; /* Set the default background color */
-  color: #fff;
-  
-}
+  .button-group {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    align-items: right;
+    justify-content: right;
+  }
 
-.size-buttons button.highlight {
-  /* Highlight styles */
-  background-color: #ff0000; /* Red or your theme color */
-}
+  .button-label {
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin: 5px;
+    text-align: center; /* Center align the text */
+  }
 
-.size button.onclick{
-  
-}
+  .button-label:hover {
+    background-color: #ccc;
+  }
+
+  .button-label.active {
+    background-color: #e84946;
+    
+    
+  }
+
+  /* Hide the default radio button appearance */
+  .button-label input[type="radio"] {
+    display: none;
+  }
