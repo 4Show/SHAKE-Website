@@ -14,7 +14,7 @@
   <header>
     <div>
       <img src="SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount">0</span></div>
+      <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount" onload="updateCartCountDisplay()">0</span></div>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
     
@@ -85,7 +85,7 @@
               <input type="radio" name="group1" class="button"> XXL
             </label>
           </div>
-          <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+          <button class="add-to-cart" onclick="toggleCart(this)">Add to Cart</button>
         </div>
       </div>
 
@@ -240,5 +240,9 @@
         
       </footer>
       <script src="script.js"></script>
+
+
+      <h2>Shopping Cart</h2>
+      <ul id="cartList"></ul>
 </body>   
 </html>

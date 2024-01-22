@@ -319,3 +319,44 @@ body {
   .button-label input[type="radio"] {
     display: none;
   }
+
+  
+/* Style for inline radio buttons */
+.Payment_details {
+  display: inline-block;
+  margin-right: 10px; /* Adjust spacing as needed */
+  }
+
+.payment_selection{
+  display: inline-block;
+}
+
+.Payment_details{
+  width: 100%;
+  height: auto;
+  display: inline;
+}
+
+.Payment_details input{
+  width: 100%;
+  height: auto;
+  display:inline;
+}
+.shipping_details{
+  align-items: center;
+  text-align: center;
+  display: block;
+}
+
+.inline-fields {
+  display: flex;
+  justify-content: space-between;
+  width: 75%;
+  align-items: center;
+  text-align: center;
+}
+
+.inline-fields label {
+   /* Adjust width as needed */
+}
+

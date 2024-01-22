@@ -1,17 +1,58 @@
-const cartCount = 0;
 
-function toggleCart(cartNode, productItem) 
+// Display cart count on page load
+updateCartCountDisplay();
+
+function toggleCart(cartNode) 
 {
-    
-    window.location.href = '';
+
+    const selectedButton = document.querySelector('.button-label input[type="radio"]:checked');
+    if (selectedButton) 
+    {
+        // Retrieve existing cart count from sessionStorage
+        const cartCount = parseInt(sessionStorage.getItem('cartCount')) ;
+
+        // Update the cart count
+        const newCartCount = cartCount + 1;
+        sessionStorage.setItem('cartCount', newCartCount);
+
+        // Update the cart count display
+        updateCartCountDisplay();
+        const cartList = document.getElementById('cartList');
+        const productName = selectedButton.dataset.name;
+        const productPrice = parseFloat(selectedButton.dataset.price);
+
+        const listItem = document.createElement('li');
+        listItem.textContent = `${productName} - $${productPrice.toFixed(2)}`;
+        cartList.appendChild(listItem);
+
+        // You can add more logic here, such as updating a total price.
+        
+    }
+    else 
+    {
+        alert('Please select a product before adding to cart.');
+    }
+
+
 
 }
+
+
+function updateCartCountDisplay() {
+    // Retrieve and display the cart count
+    const cartCount = parseInt(sessionStorage.getItem('cartCount')) ;
+    const cartCountElement = document.getElementById('cartCount');
+    if (cartCountElement) {
+      cartCountElement.textContent = cartCount;
+    }
+  }
+
 
 
 //this function will take the user to the checkout page after clicking the cart icon
 function goToCartPage()
 {
-    window.location.href = '';
+    window.location.href = 'Checkout-SHAKE.html';
 }
 
 // this function will take care of the actions associated with submitting the contact form
