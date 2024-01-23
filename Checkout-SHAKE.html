@@ -6,18 +6,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
-  <script src="script.js"></script>
+  <script src="script.js">
+
+    // var myElement = document.getElementById("formDiv");
+
+    // // Get the height of the element
+    // var elementHeight = myElement.offsetHeight;
+
+    // document.getElementById("formDiv2").style.height = elementHeight;
+
+
+  </script>
   <style>
-    .formDiv
+    body {
+        margin: 0;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    .formDiv, .formDiv2
     {
-        width: 50%;
+        width: 30%;
         height:auto;
-        display: inline-block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        margin-left: 15%;
+        margin-top: 30px;
+        margin-bottom: 100px;
     }
 
     label
     {
         display: block;
+        margin-top: 10px;
+    }
+
+    .Checkout-Form
+    {
+        display: flex;
+    }
+
+    .Address
+    {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .next-buttons
+    {
+        text-align: right;
+        margin-bottom: 20px;
+    }
+
+    form p{
+        font-size: 14px;
     }
 
   </style>
@@ -49,125 +93,96 @@
   </nav>
  
 
-    <h2>Checkout</h2>
-  
-    <div class = "contact-form-container">
-        
-        <div class = "formDiv">
-            <form class="Checkout-Form" method="post" action = "checkoutSubmit.php">
-                <div id="Shipping_details">
-                    <h2>Shipping</h2>
-                   
-                    <div class = "inline-fields">
-                        <label for="first_name">First Name:</label>
-                        <label for="last_name">Last Name:</label>   
-                    </div>
-
-                    <div class = "inline-fields">
-                        
-                        <input type="text" id="first_name" name="first_name"  class= "default" required>
-                        <input type="text" id="last_name" name="last_name" required>
-                    </div>
-                
-               
-
-                    <label for="Address">Address:</label>
-                    <input type="text" id="Address" name="Address" required>
-
-                    
-                    <div class = "inline-fields">
-                        <label for="city">City:</label>
-                        <label for="State">State:</label>
-                        <label for="Postal">Zip Code:</label>
-                    </div>
+    <h1 style="text-align: center; ">Checkout</h1>
 
 
-                    <div class = "inline-fields">
-                        <input type="text" id="city" name="city" required>
-                        <input type="text" id="State" name="State" required>
-                        <input type="text" id="Postal" name="Postal" required>
-                    </div>
+    <div class = "formDiv">
+        <form class="Checkout-Form" method="post" action = "checkoutSubmit.php">
+            <div id="Shipping_details">
+                <h2>Shipping</h2>
 
-
-                    <div class = "inline-fields">
-                        <label for="email">Email:</label>
-                        <label for="phone_number">Phone Number:</label>
-                    </div>
-
-                    <div class = "inline-fields">
-                        <input type="email" id="email" name="email" required>
-                        <input type="number" id="phone_number" name="phone_number" >
-                    </div>
-                    
-                    
-
-                    <button type="button">Continue To Payment</button>
-
+                <div class = "inline-fields">
+                    <input type="text" id="first_name" name="first_name"  class= "default" placeholder="First Name" style="width: 48%;">
+                    <input type="text" id="last_name" name="last_name" placeholder="Last Name" style="width: 48%;" required>
                 </div>
             
-                <div id="Payment_details">
-                    <h2>Payment</h2>
+                <input type="text" class="Address" name="Address" placeholder="Address" required>
 
-                    <DIV class="shipping_fields">
-                    <label class="payment-selection">
+
+                <div class = "inline-fields">
+                    <input type="text" id="city" name="city" placeholder="City" style="width: 31%;" required>
+                    <input type="text" id="State" name="State" placeholder="State" style="width: 31%;" required>
+                    <input type="text" id="Postal" name="Postal" placeholder="Zip Code" style="width: 31%;" required>
+                </div>
+
+
+                <div class = "inline-fields">
+                    <input type="email" id="email" name="email" placeholder="Email" style="width: 48%;" required>
+                    <input type="text" id="phone_number" placeholder="Phone Number" name="phone_number" style="width: 48%;">
+                </div>
+                
+                <div style="display: inline;"><button style="text-align: right;" class = "next-buttons" type="button">Continue To Payment</button></div>
+            </div>
+        
+            <div id="Payment_details">
+                <h2 style="float: center;">Payment</h2>
+                <b><p style="text-align: left;">Select Payment Method:</p></b>
+
+                <div class="inline-fields">
+                    
+                    <label class="payment-selection" style="float: inline-start;">
                         <input type="radio" name="paymentType" value="card" checked> Credit/Debit Card
                     </label>
-                    </DIV>
-                    <label class="payment-selection">
-                        <input type="radio" name="paymentType" value="cash_app"> Cash App
+                    <label class="payment-selection" style="float: center;">
+                        <input type="radio" name="paymentType" value="cash_app" > Cash App
                     </label>
-                    <label class="payment-selection">
-                        <input type="radio" name="paymentType" value="apple_pay"> Apple Pay 
+                    <label class="payment-selection" style="float: inline-end;">
+                        <input type="radio" name="paymentType" value="apple_pay" > Apple Pay
                     </label>
-                    
-                    <div class  = "cardSelected">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ">
-                        <label for="cardNum">Card Number:</label>
-                        <input type="hidden" id="cardNum" name="cardNum" value="Card Numbers" required>
-                        
-                        <label for="expiration">Expiration Date:</label>
-                        <input type="text" id="expiration" name="expiration" required>
-
-                        <label for="cvv">CVV:</label>
-                        <input type="text" id="cvv" name="cvv" required>
-
-                        <input type = "checkbox" checked> Billing address same as the shipping address</button>
-
-                        <label for="first_name">First Name:</label>
-                        <input type="text" id="first_name" name="first_name" required>
-
-                        <label for="last_name">Last Name:</label>
-                        <input type="text" id="last_name" name="last_name" required>
-                        
-                        <label for="Address">Address:</label>
-                        <input type="text" id="Address" name="Address" required>
-
-                        <label for="city">City:</label>
-                        <input type="text" id="city" name="city" required>
-                    
-                        <label for="State">State:</label>
-                        <input type="text" id="State" name="State" required>
-
-                        <label for="Postal">Zip Code:</label>
-                        <input type="text" id="Postal" name="Postal" required>
-
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required>
-
-                        <label for="phone_number">Email:</label>
-                        <input type="number" id="phone_number" name="phone_number" required>
-
-                        <p>By clicking the "Submit Payment" button, you confirm that you have read, understand, and accept our Terms of Use, Terms of Sale, Privacy Policy, and Return Policy.</p>
-                        <button type="button">Submit Payment</button>
-                    </div>
-                  
-
                 </div>
-            
                 
-            </form>
-        </div>
+                <b><p style="text-align: left;">Your full name associated with your billing address must match exactly. To change the name displayed below, update your name in the Delivery Options.</p></b>  
+                <div class  = "cardSelected">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+
+                    <div class = "inline-fields">
+                        <input type="text" id="first_name" name="first_name"  class= "default" placeholder="First Name" style="width: 48%;">
+                        <input type="text" id="last_name" name="last_name" placeholder="Last Name" style="width: 48%;" required>
+                    </div>
+                
+                    <input type="text" class="Address" name="Address" placeholder="Address" required>
+    
+    
+                    <div class = "inline-fields">
+                        <input type="text" id="city" name="city" placeholder="City" style="width: 31%;" required>
+                        <input type="text" id="State" name="State" placeholder="State" style="width: 31%;" required>
+                        <input type="text" id="Postal" name="Postal" placeholder="Zip Code" style="width: 31%;" required>
+                    </div>
+    
+    
+                    <div class = "inline-fields">
+                        <input type="email" id="email" name="email" placeholder="Email" style="width: 48%;" required>
+                        <input type="text" id="phone_number" placeholder="Phone Number" name="phone_number" style="width: 48%;">
+                    </div>  
+
+                    <b><p style="text-align: left; margin-top: 30px;">By clicking the "Submit Payment" button, you confirm that you have read, understand, and accept our Terms of Use, Terms of Sale, Privacy Policy, and Return Policy.</p></b>  
+                    <div>
+                        <button class = "next-buttons" style="float: left;" type="button">Back to Shipping</button>
+                        <button class = "next-buttons" type="button" style="float: right;">Submit Payment</button>
+                    </div>
+                </div>
+                
+
+            </div>
+        
+            
+        </form>
+    </div>
+    <div id="formDiv">
+        <h2>Shopping Cart</h2>
+        <ul id="cartList"></ul>
 
     </div>
+
 
   
 
@@ -209,6 +224,5 @@
 
   </div>
 
-  
 </footer>
 </html>
