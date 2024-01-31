@@ -7,9 +7,8 @@
   <link rel="stylesheet" href="HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
   <script src="script.js">
-    
-
-
+      
+  
  
   </script>
   <style> 
@@ -39,7 +38,7 @@
         flex-grow: 1;
         padding-left: 20px; /* Add padding to the left of product details */
         overflow-wrap: break-word;
-        display: ;
+      
         width: 100%;
         height: auto;
     }
@@ -70,29 +69,39 @@
 </head>
 
 <body>
+  <script src="script.js">
+
+    document.addEventListener('DomContentLoaded',updateCartCountDisplay);
+  </script>
 
     <header>
         <div>
           <img src="SHK-Logo.png" alt="SHK Logo">
-          <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount" onload="updateCartCountDisplay()">0</span></div>
+          <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount" >0</span></div>
+              <script>
+                // Update cart count when the page is loaded
+              document.addEventListener('DOMContentLoaded', function() {
+                  updateCartCountDisplay();
+              });
+              </script>
         </div>
         <h3>Start Hustling And Kill Everything</h3>
         
       </header>
 
-  <nav>
-    <ul>
-      <li><a href="Home-SHAKE.html" onclick="updateCartCountDisplay()">Home</a></li>
-      <li><a href="Shop-SHAKE.html" onclick="updateCartCountDisplay()">Shop</a>
-        <ul class="submenu">
-          <li><a href="#">Men</a></li>
-          <li><a href="#">Women</a></li>
+      <nav>
+        <ul>
+          <li><a href="Home-SHAKE.html">Home</a></li>
+          <li><a href="Shop-SHAKE.html">Shop</a>
+            <ul class="submenu">
+              <li><a href="#">Men</a></li>
+              <li><a href="#">Women</a></li>
+            </ul>
+          </li>
+          <li><a href="About-SHAKE.html">About Us</a></li>
+          <li><a href="Contact-SHAKE.html">Contact</a></li>
         </ul>
-      </li>
-      <li><a href="About-SHAKE.html" onclick="updateCartCountDisplay()">About Us</a></li>
-      <li><a href="Contact-SHAKE.html" onclick="updateCartCountDisplay()">Contact</a></li>
-    </ul>
-  </nav>
+      </nav>
  
  
 
@@ -139,7 +148,7 @@
                     <input type="radio" name="group1" class="button"> XXL
                   </label>
                 </div>
-                <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+                <button class="add-to-cart" onclick="toggleCart(this,1)">Add to Cart</button>
             </div>
         
       
@@ -172,7 +181,7 @@
                     <input type="radio" name="group2" class="button"> XXL
                   </label>
                 </div>
-                <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+                <button class="add-to-cart" onclick="toggleCart(this,2)">Add to Cart</button>
             </div>
          </div> 
         
@@ -209,7 +218,7 @@
                     <input type="radio" name="group3" class="button"> XXL
                   </label>
                 </div>
-                <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+                <button class="add-to-cart" onclick="toggleCart(this,3)">Add to Cart</button>
             </div>
         
       
@@ -242,7 +251,7 @@
                     <input type="radio" name="group4" class="button"> XXL
                   </label>
                 </div>
-                <button class="add-to-cart" onclick="toggleCart()">Add to Cart</button>
+                <button class="add-to-cart" onclick="toggleCart(this,4)">Add to Cart</button>
             </div>
          </div> 
         

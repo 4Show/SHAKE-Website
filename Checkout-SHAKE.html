@@ -7,14 +7,7 @@
   <link rel="stylesheet" href="HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
   <script src="script.js">
-
-    // var myElement = document.getElementById("formDiv");
-
-    // // Get the height of the element
-    // var elementHeight = myElement.offsetHeight;
-
-    // document.getElementById("formDiv2").style.height = elementHeight;
-
+    
 
   </script>
   <style>
@@ -24,7 +17,7 @@
         align-items: center;
         height: 100vh;
     }
-    .formDiv, .formDiv2
+    .formDiv
     {
         width: 30%;
         height:auto;
@@ -36,6 +29,7 @@
         margin-top: 30px;
         margin-bottom: 100px;
     }
+
 
     label
     {
@@ -64,15 +58,31 @@
         font-size: 14px;
     }
 
+    #Checkout-page
+    {
+        display: flex;
+    }
+
   </style>
 </head>
 
 <body>
+    <script >
+            // Retrieve and display the cart count
+        let cartCount = parseInt(sessionStorage.getItem('cartCount')) || 0;
+        const cartCountElement = document.getElementById('cartCount');
+        if (cartCountElement) {
+        cartCountElement.textContent = cartCount;
+        }
+
+        document.addEventListener('loaded',updateCartCountDisplay);
+        document.addEventListener('DomContentLoaded',loadCart);
+    </script>
 
   <header>
     <div>
       <img src="SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount">0</span></div>
+      <div class="cart-icon" onclick="loadCart()" >🛒 <span id="cartCount" >0</span></div>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
     
@@ -95,7 +105,7 @@
 
     <h1 style="text-align: center; ">Checkout</h1>
 
-
+<div id="Checkout-page">
     <div class = "formDiv">
         <form class="Checkout-Form" method="post" action = "checkoutSubmit.php">
             <div id="Shipping_details">
@@ -169,21 +179,17 @@
                         <button class = "next-buttons" style="float: left;" type="button">Back to Shipping</button>
                         <button class = "next-buttons" type="button" style="float: right;">Submit Payment</button>
                     </div>
-                </div>
-                
-
-            </div>
-        
-            
+                </div>     
+            </div> 
         </form>
     </div>
-    <div id="formDiv">
-        <h2>Shopping Cart</h2>
-        <ul id="cartList"></ul>
 
+    <div class="formDiv2">
+        <h2 style="text-align: center;">Shopping Cart</h2>
+        <div id="cartContent"></div>
     </div>
 
-
+</div>
   
 
 </body>
