@@ -63,6 +63,8 @@
         display: flex;
     }
 
+  
+
   </style>
 </head>
 
@@ -77,12 +79,14 @@
 
         document.addEventListener('loaded',updateCartCountDisplay);
         document.addEventListener('DomContentLoaded',loadCart);
+
+  
     </script>
 
   <header>
     <div>
       <img src="SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="loadCart()" >🛒 <span id="cartCount" >0</span></div>
+      <div class="cart-icon" onclick="loadCart()">🛒 <span id="cartCount" >0</span></div>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
     
@@ -186,7 +190,12 @@
 
     <div class="formDiv2">
         <h2 style="text-align: center;">Shopping Cart</h2>
-        <div id="cartContent"></div>
+        <form action="post">
+            <div onload="loadCart()" id="cartContent"></div>
+            <div id="subtotal">
+                <h3 onload="subtotal()"></h3>
+            </div>
+        </form>
     </div>
 
 </div>

@@ -363,15 +363,31 @@ body {
 
 .formDiv2
 {
-  width: 30%;
-  height:auto;
-  display: flex;
+  width: 35%;
+  max-height:877.719px;
+  border-radius: 8px;
   align-items: center;
   justify-content: center;
   text-align: center;
   margin-right: 15%;
   margin-top: 30px;
   margin-bottom: 100px;
-  text-align: right;
+  float: right;
+  border: 20px black;
+  background-color: #e84946; 
+  
  
+}
+
+.formDiv2 h2
+{
+  color: black;
+  margin-top: 63px;
+}
+
+#cartContent
+{
+  overflow-y: auto;
+  height: 50%;
+  width: auto;
 }

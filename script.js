@@ -10,6 +10,21 @@ function toggleCart(cartNode, productId)
          let cartCount = parseInt(sessionStorage.getItem('cartCount')) || 0;
         
          let productContainer = cartNode.parentElement.parentElement
+         let radioButtonsLabel = productContainer.querySelector("div").getElementsByClassName("button-group")[0].querySelectorAll("label");
+
+
+         for (index = 0; index < radioButtonsLabel.length; index++) 
+         {
+            var radioButtons = radioButtonsLabel[index].querySelector("input");
+           
+           
+             if (radioButtons.checked) 
+             {
+                 // Get the label associated with the checked radio button
+                var sizeHold = radioButtonsLabel[index].innerText;
+                
+             }
+         }
 
 
         // Extract product information from the container
@@ -17,10 +32,11 @@ function toggleCart(cartNode, productId)
             name: productContainer.querySelector("div").querySelector("h3").innerHTML,
             description: productContainer.querySelector("div").querySelector("p").innerHTML,
             price: productContainer.querySelector("div").getElementsByClassName("price")[0].innerHTML,
-            // size: productContainer.querySelector("div").,
+            size: sizeHold,
             image: productContainer.querySelector("img").getAttribute("src")
         };
 
+        
         //window.alert(productContainer.querySelector("div").getElementsByClassName("price")[0].innerHTML);
 
         cart.push(product);
@@ -51,15 +67,16 @@ function loadCart()
 
     // Display cart content
     const cartContent = document.getElementById('cartContent');
+    var subtotal = 0;
+    
 
-
-    for(i =0; i < cart.length -1 ; i++)
+    for(i =0; i < cart.length  ; i++)
     {
         if (cart.length == 0) 
         {
             const para = document.createElement("p");
-            const node = document.createTextNode("Your cart is empty.");
-            para.appendChild(node);
+            para.innerHTML = "Your cart is empty.";
+           
 
             cartContent.appendChild(para);
         } 
@@ -67,6 +84,18 @@ function loadCart()
         {
             //create div element
             let divContainer = document.createElement("div");
+            let displayInline = document.createElement("div");
+            displayInline.setAttribute("class", "displayInline");
+            displayInline.style.display="flex";
+
+
+            //gets the subtotal
+            var productPrice = parseFloat(cart[i].price.replace("$",''));
+            let subtotalElement = document.getElementById("subtotal").querySelector("h3");
+            subtotal +=  productPrice;
+            subtotalElement.style.textAlign= "right";
+            subtotalElement.innerHTML = "Subtotal: $" + subtotal;
+        
             
 
             //create the children of the div element
@@ -75,19 +104,68 @@ function loadCart()
             let img = document.createElement("img");
             img.setAttribute('src',cart[i].image);
             divContainer.appendChild(img);
+
+
+            //sets up the quanitty 
+            let quantDiv = document.createElement("div");
+            quantDiv.setAttribute("class","quantity");
+            quantDiv.style.display = "flex";
+            quantDiv.style.alignItems = 'center';
+            quantDiv.style.justifyContent = 'center';
+            quantDiv.style.width = "50%";
             
+
+            let minusBut = document.createElement("button");
+            minusBut.setAttribute("class", "minus-btn");
+            minusBut.addEventListener('click', function(){
+                decreaseQuantity();
+            });
+            minusBut.innerText = "-";
+            
+
+            let quantityInput = document.createElement("input");
+            quantityInput.setAttribute("type","text");
+            quantityInput.setAttribute("id","quantity");
+            quantityInput.setAttribute("value", 1);
+            quantityInput.style.textAlign = "center";
+            quantityInput.style.width = "40%";
+            
+
+            let plusBut = document.createElement("button");
+            plusBut.setAttribute("class", "plus-btn");
+            plusBut.addEventListener('click', increaseQuantity);
+            plusBut.innerText = "+";
+           
+
+            quantDiv.appendChild(minusBut);
+            quantDiv.appendChild(quantityInput);
+            quantDiv.appendChild(plusBut);
+           
+            displayInline.appendChild(quantDiv);
+            
+            descDiv = document.createElement("div");
+            descDiv.setAttribute("class", "productDescription");
+            descDiv.style.width="50%";
+            descDiv.style.textAlign = "center";
 
             // gets the name           
             let par2 = document.createElement("p");
             par2.innerText = cart[i].name; 
-            divContainer.appendChild(par2);
+            descDiv.appendChild(par2);
             
-            
+            // gets the size
+            let parb = document.createElement("p");
+            parb.innerText= "Size: " + cart[i].size; 
+            descDiv.appendChild(parb);
 
             // gets the price
             let par = document.createElement("p");
             par.innerText= cart[i].price; 
-            divContainer.appendChild(par);
+            descDiv.appendChild(par);
+
+
+            displayInline.appendChild(descDiv);
+            divContainer.appendChild(displayInline);
             
 
             //append the information to the cartContainer
@@ -95,6 +173,20 @@ function loadCart()
             
                             
         }
+    }
+   
+}
+function increaseQuantity() {
+    var quantityInput = document.getElementById('quantity');
+    var currentValue = parseInt(quantityInput.value);
+    quantityInput.value = currentValue + 1;
+}
+
+function decreaseQuantity() {
+    var quantityInput = document.getElementById('quantity');
+    var currentValue = parseInt(quantityInput.value);
+    if (currentValue > 1) {
+        quantityInput.value = currentValue - 1;
     }
 }
 
@@ -165,3 +257,15 @@ function showSection(sectionId)
     activeSection.classList.add('active');
 }
 
+
+document.querySelector("cart-icon").addEventListener('click',function()
+{
+    let cart = JSON.parse(sessionStorage("cart"));
+    let subtotal = 0;
+    for(i = 0; i < cart.length ; i++)
+    {
+        subtotal += cart[i].price;
+    }
+
+   
+});
