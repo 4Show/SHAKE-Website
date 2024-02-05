@@ -385,9 +385,48 @@ body {
   margin-top: 63px;
 }
 
-#cartContent
+.cartContent
 {
   overflow-y: auto;
   height: 50%;
   width: auto;
+}
+
+.cartTab 
+{
+  width: 400px;
+  background-color: #2b2b2b;
+  color: #ccc;
+  position: fixed;
+  inset: 0 0 0 auto;
+  display: grid;
+  grid-template-rows: 70px 1fr 70px;
+
+}
+
+.cartTab h1{
+  padding: 20px;
+  margin: 0;
+  font-weight: 300;
+}
+
+.cartTab .btn
+{
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+
+}
+
+.cartTab .btn button
+{
+  background-color: white;
+  border: none;
+  font-family: poppins;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cartTab .btn .close
+{
+  background-color: #e84946;
 }

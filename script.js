@@ -75,101 +75,106 @@ function loadCart()
         if (cart.length == 0) 
         {
             const para = document.createElement("p");
-            para.innerHTML = "Your cart is empty.";
+            para.textContent = "Your cart is empty.";
            
 
             cartContent.appendChild(para);
         } 
         else
         {
-            //create div element
-            let divContainer = document.createElement("div");
-            let displayInline = document.createElement("div");
-            displayInline.setAttribute("class", "displayInline");
-            displayInline.style.display="flex";
+            //creates the item div that all the product info will be appended to
+            let itemDiv = document.createElement("div");
+            
 
 
-            //gets the subtotal
-            var productPrice = parseFloat(cart[i].price.replace("$",''));
-            let subtotalElement = document.getElementById("subtotal").querySelector("h3");
-            subtotal +=  productPrice;
-            subtotalElement.style.textAlign= "right";
-            subtotalElement.innerHTML = "Subtotal: $" + subtotal;
+            // //create div element
+            // let divContainer = document.createElement("div");
+            // let displayInline = document.createElement("div");
+            // displayInline.setAttribute("class", "displayInline");
+            // displayInline.style.display="flex";
+
+
+            // //gets the subtotal
+            // var productPrice = parseFloat(cart[i].price.replace("$",''));
+            // let subtotalElement = document.getElementById("subtotal").querySelector("h3");
+            // subtotal +=  productPrice;
+            // subtotalElement.style.textAlign= "right";
+            // subtotalElement.innerHTML = "Subtotal: $" + subtotal;
         
             
 
-            //create the children of the div element
+            // //create the children of the div element
 
-            //gets the image
-            let img = document.createElement("img");
-            img.setAttribute('src',cart[i].image);
-            divContainer.appendChild(img);
+            // //gets the image
+            // let img = document.createElement("img");
+            // img.setAttribute('src',cart[i].image);
+            // divContainer.appendChild(img);
 
 
-            //sets up the quanitty 
-            let quantDiv = document.createElement("div");
-            quantDiv.setAttribute("class","quantity");
-            quantDiv.style.display = "flex";
-            quantDiv.style.alignItems = 'center';
-            quantDiv.style.justifyContent = 'center';
-            quantDiv.style.width = "50%";
+            // //sets up the quanitty 
+            // let quantDiv = document.createElement("div");
+            // quantDiv.setAttribute("class","quantity");
+            // quantDiv.style.display = "flex";
+            // quantDiv.style.alignItems = 'center';
+            // quantDiv.style.justifyContent = 'center';
+            // quantDiv.style.width = "50%";
             
 
-            let minusBut = document.createElement("button");
-            minusBut.setAttribute("class", "minus-btn");
-            minusBut.addEventListener('click', function(){
-                decreaseQuantity();
-            });
-            minusBut.innerText = "-";
+            // let minusBut = document.createElement("button");
+            // minusBut.setAttribute("class", "minus-btn");
+            // minusBut.addEventListener('click', function(){
+            //     decreaseQuantity();
+            // });
+            // minusBut.innerText = "-";
             
 
-            let quantityInput = document.createElement("input");
-            quantityInput.setAttribute("type","text");
-            quantityInput.setAttribute("id","quantity");
-            quantityInput.setAttribute("value", 1);
-            quantityInput.style.textAlign = "center";
-            quantityInput.style.width = "40%";
+            // let quantityInput = document.createElement("input");
+            // quantityInput.setAttribute("type","text");
+            // quantityInput.setAttribute("id","quantity");
+            // quantityInput.setAttribute("value", 1);
+            // quantityInput.style.textAlign = "center";
+            // quantityInput.style.width = "40%";
             
 
-            let plusBut = document.createElement("button");
-            plusBut.setAttribute("class", "plus-btn");
-            plusBut.addEventListener('click', increaseQuantity);
-            plusBut.innerText = "+";
+            // let plusBut = document.createElement("button");
+            // plusBut.setAttribute("class", "plus-btn");
+            // plusBut.addEventListener('click', increaseQuantity);
+            // plusBut.innerText = "+";
            
 
-            quantDiv.appendChild(minusBut);
-            quantDiv.appendChild(quantityInput);
-            quantDiv.appendChild(plusBut);
+            // quantDiv.appendChild(minusBut);
+            // quantDiv.appendChild(quantityInput);
+            // quantDiv.appendChild(plusBut);
            
-            displayInline.appendChild(quantDiv);
+            // displayInline.appendChild(quantDiv);
             
-            descDiv = document.createElement("div");
-            descDiv.setAttribute("class", "productDescription");
-            descDiv.style.width="50%";
-            descDiv.style.textAlign = "center";
+            // descDiv = document.createElement("div");
+            // descDiv.setAttribute("class", "productDescription");
+            // descDiv.style.width="50%";
+            // descDiv.style.textAlign = "center";
 
-            // gets the name           
-            let par2 = document.createElement("p");
-            par2.innerText = cart[i].name; 
-            descDiv.appendChild(par2);
+            // // gets the name           
+            // let par2 = document.createElement("p");
+            // par2.innerText = cart[i].name; 
+            // descDiv.appendChild(par2);
             
-            // gets the size
-            let parb = document.createElement("p");
-            parb.innerText= "Size: " + cart[i].size; 
-            descDiv.appendChild(parb);
+            // // gets the size
+            // let parb = document.createElement("p");
+            // parb.innerText= "Size: " + cart[i].size; 
+            // descDiv.appendChild(parb);
 
-            // gets the price
-            let par = document.createElement("p");
-            par.innerText= cart[i].price; 
-            descDiv.appendChild(par);
+            // // gets the price
+            // let par = document.createElement("p");
+            // par.innerText= cart[i].price; 
+            // descDiv.appendChild(par);
 
 
-            displayInline.appendChild(descDiv);
-            divContainer.appendChild(displayInline);
+            // displayInline.appendChild(descDiv);
+            // divContainer.appendChild(displayInline);
             
 
-            //append the information to the cartContainer
-            cartContent.appendChild(divContainer);
+            // //append the information to the cartContainer
+            // cartContent.appendChild(divContainer);
             
                             
         }
