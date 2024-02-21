@@ -18,10 +18,13 @@
   <header>
     <div>
       <img src="SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount">0</span></div>
+      <div class="cart-icon" onclick="loadCart()">🛒 <span id="cartCount">0</span></div>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
-    
+    <script>
+      updateCartCountDisplay();
+      document.addEventListener('DomContentLoaded',updateCartCountDisplay);
+    </script>
   </header>
 
   <nav>
@@ -45,6 +48,31 @@
   <!-- <div><img src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/HustlersTag.png" alt="Hustler tag"></div> -->
   <h4>SHAKE, an abbreviation for <b>S<b>tart <b>H<b>ustling <b>A<b>nd <b>K<b>ill <b>E<b>verything, was founded by a group of friends who live by the motto "4's up L's down." We are dedicated to creating exclusive and authentic clothing that reflects the camaraderie amongst lifelong friends. Our mission is to provide the public with high-quality and luxurious streetwear. The dragonfly embodied in our logo symbolizes change, adaptation, and self-realization. The change that we all seek refers to mental and emotional maturity that will allow the deeper meaning of life to reveal itself. Thank you, and remember real hustlers are always welcome!</h4>
 </section>
+
+<div class="cartTab">
+  <h1>Shopping Cart</h1>
+  <div class="cartContent">
+    <div class="image">
+      <img src="" alt="">
+    </div>
+    <div class="productName">
+
+    </div>
+    <div class="productPrice">
+
+    </div>
+    <div class="quantity">
+      <span class="minus">-</span>
+      <span>1</span>
+      <span class="plus">+</span>
+    </div>
+  </div>
+  <div class="btn">
+    <button class="close" onclick="closeCart()">CLOSE</button>
+    <button class="checkout">PROCEED TO CHECKOUT</button>
+  </div>
+</div>
+
 </body>
 
 <footer>

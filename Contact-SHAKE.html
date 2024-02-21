@@ -18,17 +18,18 @@
 </head>
 
 <body>
-  <script>
-    updateCartCountDisplay();
-    document.addEventListener('DomContentLoaded',updateCartCountDisplay);
-  </script>
+ 
 
   <header>
     <div>
       <img src="SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount">0</span></div>
+      <div class="cart-icon" onclick="loadCart()">🛒 <span id="cartCount">0</span></div>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
+    <script>
+      updateCartCountDisplay();
+      document.addEventListener('DomContentLoaded',updateCartCountDisplay);
+    </script>
     
   </header>
 
@@ -71,6 +72,29 @@
 
     </div>
 
+    <div class="cartTab">
+      <h1>Shopping Cart</h1>
+      <div class="cartContent">
+        <div class="image">
+          <img src="" alt="">
+        </div>
+        <div class="productName">
+
+        </div>
+        <div class="productPrice">
+
+        </div>
+        <div class="quantity">
+          <span class="minus">-</span>
+          <span>1</span>
+          <span class="plus">+</span>
+        </div>
+      </div>
+      <div class="btn">
+        <button class="close" onclick="closeCart()">CLOSE</button>
+        <button class="checkout">PROCEED TO CHECKOUT</button>
+      </div>
+    </div>
   
 
 </body>

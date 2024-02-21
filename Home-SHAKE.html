@@ -13,20 +13,22 @@
 </head>
 
 <body>
-  <script src="script.js">
 
-    document.addEventListener('DomContentLoaded',updateCartCountDisplay);
-  </script>
 
   <header>
     <div>
       <img src="SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="goToCartPage()">🛒 <span id="cartCount" >0</span></div>
+      <div class="cart-icon" onclick="loadCart()">🛒 <span id="cartCount" >0</span></div>
          <script>
               // Update cart count when the page is loaded
             document.addEventListener('DOMContentLoaded', function() {
                 updateCartCountDisplay();
             });
+
+         
+
+            document.addEventListener('DomContentLoaded',updateCartCountDisplay);
+
          </script>
         
 
@@ -54,7 +56,7 @@
    <!-- Video Section -->
   <section id="video-section">
     <video width="100%" height="400" autoplay muted loop>
-      <source src="/Users/mastercolen/Desktop/Business/Website/Shake Website/Media/Icecream.mp4" type="video/mp4">
+      <source src="D:\Ceej\Music Video Clips\Ceej - Ice Cream (Official Music Video).mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </section>
@@ -224,7 +226,7 @@
       <div class="cartTab">
         <h1>Shopping Cart</h1>
         <div class="cartContent">
-          <div class="image">
+          <!-- <div class="image">
             <img src="" alt="">
           </div>
           <div class="productName">
@@ -237,11 +239,13 @@
             <span class="minus">-</span>
             <span>1</span>
             <span class="plus">+</span>
-          </div>
+          </div> -->
+          
         </div>
+        <div class="subtotal"><h3></h3></div>
         <div class="btn">
-          <button class="close">CLOSE</button>
-          <button class="checkout">PROCEED TO CHECKOUT</button>
+          <button class="close" onclick="closeCart()">CLOSE</button>
+          <button class="checkout" onclick="loadCart()">PROCEED TO CHECKOUT</button>
         </div>
       </div>
 
