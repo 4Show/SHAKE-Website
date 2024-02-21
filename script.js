@@ -106,7 +106,6 @@ function loadCart()
             //gets the subtotal
             var productPrice = parseFloat(cart[i].price.replace("$",''));
             let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
-            window.alert(productPrice);
             subtotal +=  productPrice;
             subtotalElement.style.textAlign= "right";
             subtotalElement.innerHTML = "Subtotal: $" + subtotal;
@@ -185,7 +184,7 @@ function loadCart()
 
             //append the information to the cartContainer
             cartContent.appendChild(divContainer);
-            
+            cartContent.style.overflowY = "hidden";
                          
         }
     }
