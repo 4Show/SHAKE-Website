@@ -18,7 +18,7 @@
   <header>
     <div>
       <img src="SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="loadCart()">🛒 <span id="cartCount" >0</span></div>
+      <div class="cart-icon" onclick="loadCart(); showCart();">🛒 <span id="cartCount" >0</span></div>
          <script>
               // Update cart count when the page is loaded
             document.addEventListener('DOMContentLoaded', function() {
@@ -103,7 +103,7 @@
               <input type="radio" name="group1" class="button"> XXL
             </label>
           </div>
-          <button class="add-to-cart" onclick="toggleCart(this, 1)">Add to Cart</button>
+          <button class="add-to-cart" onclick="toggleCart(this, 1); loadCart();">Add to Cart</button>
         </div>
       </div>
 

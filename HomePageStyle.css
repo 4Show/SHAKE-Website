@@ -404,6 +404,7 @@ body {
   grid-template-rows: 70px 1fr 70px;
   transition-duration: 2s;
   transition-timing-function: ease-in-out;
+  overflow: hidden;
 
 }
 
@@ -432,4 +433,9 @@ body {
 .cartTab .btn .close
 {
   background-color: #e84946;
+}
+
+.cartTab .itemDiv:nth-child(even)
+{
+  background-color: rgb(77, 73, 73);
 }

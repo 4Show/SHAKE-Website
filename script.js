@@ -22,7 +22,7 @@ function toggleCart(cartNode, productId)
              {
                  // Get the label associated with the checked radio button
                 var sizeHold = radioButtonsLabel[index].innerText;
-                
+                sizeSelected = true;
              }
          }
 
@@ -36,17 +36,22 @@ function toggleCart(cartNode, productId)
             image: productContainer.querySelector("img").getAttribute("src")
         };
 
-        
-        //window.alert(productContainer.querySelector("div").getElementsByClassName("price")[0].innerHTML);
+        if(!sizeSelected)
+        {
+            alert("Please select a size before adding to cart");
+        }
+        else
+        {
+            cart.push(product);
 
-        cart.push(product);
-        
-        cartCount++;
+            cartCount++;
 
-         // Update sessionStorage with the new cart data
-        sessionStorage.setItem('cart', JSON.stringify(cart));
-        sessionStorage.setItem('cartCount', cartCount);
-        updateCartCountDisplay();
+            // Update sessionStorage with the new cart data
+            sessionStorage.setItem('cart', JSON.stringify(cart));
+            sessionStorage.setItem('cartCount', cartCount);
+            updateCartCountDisplay();
+        }
+        
     }
     else 
     {
@@ -57,11 +62,16 @@ function toggleCart(cartNode, productId)
 
 }
 
+function showCart()
+{
+     //transitions the cart open
+     transWin = document.querySelector(".cartTab");
+     transWin.style.right = "0px";
+}
+
 function loadCart()
 {
-    //transitions the cart open
-    transWin = document.querySelector(".cartTab");
-    transWin.style.right = "0px";
+
 
     // Get cart data from sessionStorage
     let cart = JSON.parse(sessionStorage.getItem('cart'));
@@ -91,12 +101,13 @@ function loadCart()
         else
         {
             //creates the item div that all the product info will be appended to
-            let itemDiv = document.createElement("div");
+        
             
               
 
             //create div element
             let divContainer = document.createElement("div");
+            divContainer.setAttribute("class","itemDiv");
             let displayInline = document.createElement("div");
             displayInline.setAttribute("class", "displayInline");
             displayInline.style.display="flex";
@@ -108,7 +119,7 @@ function loadCart()
             let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
             subtotal +=  productPrice;
             subtotalElement.style.textAlign= "right";
-            subtotalElement.innerHTML = "Subtotal: $" + subtotal;
+            subtotalElement.innerHTML = "Subtotal: $" + subtotal.toFixed(2);
             
             
 
@@ -117,6 +128,8 @@ function loadCart()
             //gets the image
             let img = document.createElement("img");
             img.setAttribute('src',cart[i].image);
+            img.style.maxHeight = "auto";
+            img.style.maxWidth = "100%";
             divContainer.appendChild(img);
 
 
@@ -155,7 +168,7 @@ function loadCart()
             quantDiv.appendChild(quantityInput);
             quantDiv.appendChild(plusBut);
            
-            displayInline.appendChild(quantDiv);
+            
             
             descDiv = document.createElement("div");
             descDiv.setAttribute("class", "productDescription");
@@ -179,13 +192,17 @@ function loadCart()
 
 
             displayInline.appendChild(descDiv);
+            displayInline.appendChild(quantDiv);
             divContainer.appendChild(displayInline);
-            
+            divContainer.style.padding = "20px";
 
             //append the information to the cartContainer
             cartContent.appendChild(divContainer);
-            cartContent.style.overflowY = "hidden";
-                         
+            cartContent.style.overflowY = "auto";
+            cartContent.style.padding = "0 -0px 0 0";
+            cartContent.style.boxSizing = "content-box";     
+            cartContent.style.width = "100%";
+            cartContent.style.height = "100%";        
         }
     }
    
