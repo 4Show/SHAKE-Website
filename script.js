@@ -8,10 +8,12 @@ function toggleCart(cartNode, productId)
          // Get existing cart data from sessionStorage
          let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
          let cartCount = parseInt(sessionStorage.getItem('cartCount')) || 0;
+        //  let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) || [];
+         
         
          let productContainer = cartNode.parentElement.parentElement
          let radioButtonsLabel = productContainer.querySelector("div").getElementsByClassName("button-group")[0].querySelectorAll("label");
-
+         let sizeSelected=false;
 
          for (index = 0; index < radioButtonsLabel.length; index++) 
          {
@@ -23,9 +25,11 @@ function toggleCart(cartNode, productId)
                  // Get the label associated with the checked radio button
                 var sizeHold = radioButtonsLabel[index].innerText;
                 sizeSelected = true;
+                // cartIDs.push(radioButtonsLabel[index].value);
+
              }
          }
-
+         
 
         // Extract product information from the container
         let product = {
@@ -33,23 +37,28 @@ function toggleCart(cartNode, productId)
             description: productContainer.querySelector("div").querySelector("p").innerHTML,
             price: productContainer.querySelector("div").getElementsByClassName("price")[0].innerHTML,
             size: sizeHold,
-            image: productContainer.querySelector("img").getAttribute("src")
+            image: productContainer.querySelector("img").getAttribute("src"),
+            quantity:1
         };
+
+     
 
         if(!sizeSelected)
         {
             alert("Please select a size before adding to cart");
         }
-        else
-        {
+        else{
             cart.push(product);
+          
 
             cartCount++;
 
             // Update sessionStorage with the new cart data
             sessionStorage.setItem('cart', JSON.stringify(cart));
             sessionStorage.setItem('cartCount', cartCount);
+            // sessionStorage.setItem('cartIDs', cartIDs);
             updateCartCountDisplay();
+           
         }
         
     }
@@ -58,9 +67,11 @@ function toggleCart(cartNode, productId)
         alert('Please select a product before adding to cart.');
     }
 
-
+    // sessionStorage.getItem("cartIDs");
 
 }
+
+
 
 function showCart()
 {
@@ -72,7 +83,7 @@ function showCart()
 function loadCart()
 {
 
-
+    //fixCart();
     // Get cart data from sessionStorage
     let cart = JSON.parse(sessionStorage.getItem('cart'));
     // window.alert(cart.length);
@@ -86,140 +97,208 @@ function loadCart()
         cartContent.removeChild(cartContent.firstChild);
     }
     var subtotal = 0;
+
+
+    if (cart.length == 0) 
+    {
+       window.alert("Cart Empty")
+    } 
     
 
     for(i =0; i < cart.length  ; i++)
     {
-        if (cart.length == 0) 
+        if (cart.length == 0)
         {
             const para = document.createElement("p");
             para.textContent = "Your cart is empty.";
            
 
             cartContent.appendChild(para);
-        } 
+        }
         else
         {
             //creates the item div that all the product info will be appended to
         
-            
+        
               
 
-            //create div element
-            let divContainer = document.createElement("div");
-            divContainer.setAttribute("class","itemDiv");
-            let displayInline = document.createElement("div");
-            displayInline.setAttribute("class", "displayInline");
-            displayInline.style.display="flex";
-            
+                //create div element
+                let divContainer = document.createElement("div");
+                divContainer.setAttribute("class","itemDiv");
+                let displayInline = document.createElement("div");
+                displayInline.setAttribute("class", "displayInline");
+                displayInline.style.display="flex";
+                
+
+                //create the children of the div element
+
+                //gets the image
+                let img = document.createElement("img");
+                img.setAttribute('src',cart[i].image);
+                img.style.maxHeight = "auto";
+                img.style.maxWidth = "100%";
+                divContainer.appendChild(img);
 
 
-            //gets the subtotal
-            var productPrice = parseFloat(cart[i].price.replace("$",''));
-            let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
-            subtotal +=  productPrice;
-            subtotalElement.style.textAlign= "right";
-            subtotalElement.innerHTML = "Subtotal: $" + subtotal.toFixed(2);
-            
-            
+                //sets up the quanitty 
+                let quantDiv = document.createElement("div");
+                let indexVal = i +1
+                quantDiv.setAttribute("class","quantity" + indexVal);
+                quantDiv.style.display = "flex";
+                quantDiv.style.alignItems = 'center';
+                quantDiv.style.justifyContent = 'center';
+                quantDiv.style.width = "50%";
+                
 
-            //create the children of the div element
+                let minusBut = document.createElement("button");
+                minusBut.setAttribute("class", "minus-btn");
+                minusBut.addEventListener('click', function(){
+                    decreaseQuantity(this.parentElement);
+                    
+                });
+                minusBut.innerText = "-";
+                
+                let quantityInput = document.createElement("input");
+                quantityInput.setAttribute("type","text");
+                quantityInput.setAttribute("class","quantity");
+                quantityInput.setAttribute("value", cart[i].quantity);
+                quantityInput.style.textAlign = "center";
+                quantityInput.style.width = "40%";
+                
 
-            //gets the image
-            let img = document.createElement("img");
-            img.setAttribute('src',cart[i].image);
-            img.style.maxHeight = "auto";
-            img.style.maxWidth = "100%";
-            divContainer.appendChild(img);
-
-
-            //sets up the quanitty 
-            let quantDiv = document.createElement("div");
-            quantDiv.setAttribute("class","quantity");
-            quantDiv.style.display = "flex";
-            quantDiv.style.alignItems = 'center';
-            quantDiv.style.justifyContent = 'center';
-            quantDiv.style.width = "50%";
-            
-
-            let minusBut = document.createElement("button");
-            minusBut.setAttribute("class", "minus-btn");
-            minusBut.addEventListener('click', function(){
-                decreaseQuantity();
-            });
-            minusBut.innerText = "-";
-            
-
-            let quantityInput = document.createElement("input");
-            quantityInput.setAttribute("type","text");
-            quantityInput.setAttribute("id","quantity");
-            quantityInput.setAttribute("value", 1);
-            quantityInput.style.textAlign = "center";
-            quantityInput.style.width = "40%";
-            
-
-            let plusBut = document.createElement("button");
-            plusBut.setAttribute("class", "plus-btn");
-            plusBut.addEventListener('click', increaseQuantity);
-            plusBut.innerText = "+";
-           
-
-            quantDiv.appendChild(minusBut);
-            quantDiv.appendChild(quantityInput);
-            quantDiv.appendChild(plusBut);
-           
+                let plusBut = document.createElement("button");
+                plusBut.setAttribute("class", "plus-btn");
+                plusBut.innerText = "+";
+                plusBut.addEventListener('click', function(){
+                    increaseQuantity(this.parentElement);
+                });
             
             
-            descDiv = document.createElement("div");
-            descDiv.setAttribute("class", "productDescription");
-            descDiv.style.width="50%";
-            descDiv.style.textAlign = "center";
 
-            // gets the name           
-            let par2 = document.createElement("p");
-            par2.innerText = cart[i].name; 
-            descDiv.appendChild(par2);
+                quantDiv.appendChild(minusBut);
+                quantDiv.appendChild(quantityInput);
+                quantDiv.appendChild(plusBut);
             
-            // gets the size
-            let parb = document.createElement("p");
-            parb.innerText= "Size: " + cart[i].size; 
-            descDiv.appendChild(parb);
+                //gets the subtotal
+                var productPrice = parseFloat(cart[i].price.replace("$",''));
+                let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
+                subtotal +=  quantityInput.getAttribute("value") * productPrice;
+                subtotalElement.style.textAlign= "right";
+                subtotalElement.innerHTML = "Subtotal: $" + subtotal.toFixed(2);
+                
+                
+                descDiv = document.createElement("div");
+                descDiv.setAttribute("class", "productDescription");
+                descDiv.style.width="50%";
+                descDiv.style.textAlign = "center";
 
-            // gets the price
-            let par = document.createElement("p");
-            par.innerText= cart[i].price; 
-            descDiv.appendChild(par);
+                // gets the name           
+                let par2 = document.createElement("p");
+                par2.innerText = cart[i].name; 
+                descDiv.appendChild(par2);
+                
+                // gets the size
+                let parb = document.createElement("p");
+                parb.innerText= "Size: " + cart[i].size; 
+                descDiv.appendChild(parb);
+
+                // gets the price
+                let par = document.createElement("p");
+                par.innerText= cart[i].price; 
+                descDiv.appendChild(par);
 
 
-            displayInline.appendChild(descDiv);
-            displayInline.appendChild(quantDiv);
-            divContainer.appendChild(displayInline);
-            divContainer.style.padding = "20px";
+                displayInline.appendChild(descDiv);
+                displayInline.appendChild(quantDiv);
+                divContainer.appendChild(displayInline);
+                divContainer.style.padding = "20px";
 
-            //append the information to the cartContainer
-            cartContent.appendChild(divContainer);
-            cartContent.style.overflowY = "auto";
-            cartContent.style.padding = "0 -0px 0 0";
-            cartContent.style.boxSizing = "content-box";     
-            cartContent.style.width = "100%";
-            cartContent.style.height = "100%";        
-        }
+                //append the information to the cartContainer
+                cartContent.appendChild(divContainer);
+                cartContent.style.overflowY = "auto";
+                cartContent.style.padding = "0 -0px 0 0";
+                cartContent.style.boxSizing = "content-box";     
+                cartContent.style.width = "100%";
+                cartContent.style.height = "100%";    
+        }   
     }
    
 }
-function increaseQuantity() {
-    var quantityInput = document.getElementById('quantity');
+
+function updateSubtotal()
+{
+   
+    let cart = JSON.parse(sessionStorage.getItem('cart'));
+    let subtotal = 0;
+    for(i = 0; i < cart.length; i++)
+    {
+        var productPrice = parseFloat(cart[i].price.replace("$",''));
+       
+        let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
+        window.alert(productPrice);
+        subtotal +=  quantityInput.getAttribute("value") * productPrice;
+       
+        subtotalElement.style.textAlign= "right";
+        subtotalElement.innerHTML = "Subtotal: $" + subtotal.toFixed(2);
+
+    }
+    
+        
+}
+function increaseQuantity(quantDiv) {
+    
+    var quantityInput = quantDiv.querySelector("input");
     var currentValue = parseInt(quantityInput.value);
+    
+    var priceIncrement = quantDiv.parentElement.querySelector(".productDescription").lastElementChild.innerText;
+    var productPrice = parseFloat(priceIncrement.replace("$",''));
+    
+    // let cartCount = parseInt(sessionStorage.getItem('cartCount'));
+    // cartCount +=1;
+    // sessionStorage.setItem("cartCount", cartCount);
+
+    
     quantityInput.value = currentValue + 1;
+    let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
+    
+    let currentSubtotal = subtotalElement.innerText.replace("Subtotal: $",'') 
+    subtotal = parseFloat(currentSubtotal) + parseFloat(productPrice);
+    subtotalElement.innerText =  "Subtotal: $" + subtotal.toFixed(2);
+
 }
 
-function decreaseQuantity() {
-    var quantityInput = document.getElementById('quantity');
+function decreaseQuantity(quantDiv) {
+    var quantityInput = quantDiv.querySelector("input");
     var currentValue = parseInt(quantityInput.value);
-    if (currentValue > 1) {
-        quantityInput.value = currentValue - 1;
+    quantityInput.value = currentValue - 1;
+
+    if(quantityInput.value < 1)
+    {
+        var itemDiv = quantDiv.parentElement.parentElement.remove();
+       
+        
+        // let cart = JSON.parse(sessionStorage.getItem('cart'));
+        // // TODO remove item from cart
+     
     }
+    
+    // let cartCount = parseInt(sessionStorage.getItem('cartCount'));
+    // cartCount -=1;
+    // sessionStorage.setItem("cartCount", cartCount);
+    var priceIncrement = quantDiv.parentElement.querySelector(".productDescription").lastElementChild.innerText;
+    var productPrice = parseFloat(priceIncrement.replace("$",''));
+
+    
+    let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
+
+    let currentSubtotal = subtotalElement.innerText.replace("Subtotal: $",'') 
+    subtotal = parseFloat(currentSubtotal) - parseInt(productPrice);
+    subtotalElement.innerText =  "Subtotal: $" + subtotal.toFixed(2);
+ 
+ 
 }
+
+
 
 function updateCartCountDisplay() {
 
@@ -306,4 +385,64 @@ function closeCart()
     closeBtn = document.querySelector(".cartTab");
     closeBtn.style.right = "-400px";
     
+    updateCartCountDisplay();
 }
+
+async function createPaymentLink()
+{
+    lineItems = addtoCart();
+
+
+    try {
+        const response = await client.checkoutApi.createPaymentLink({
+          description: 'SHK Apparel',
+          order: {
+            locationId: 'L96PW6T2031NW',
+            lineItems: [
+              {
+                quantity: '1',
+                catalogObjectId: 'YE5IZG3MRWPGUTU6AAHJJOLR',
+                itemType: 'ITEM'
+              },
+              {
+                quantity: '1',
+                catalogObjectId: 'XPW67JJWOQUJT63ANITAESSV',
+                itemType: 'ITEM'
+              }
+            ]
+          },
+          checkoutOptions: {
+            allowTipping: false,
+            merchantSupportEmail: '4showinvestments@gmail.com',
+            askForShippingAddress: true,
+            acceptedPaymentMethods: {
+              applePay: true,
+              googlePay: true,
+              cashAppPay: true,
+              afterpayClearpay: true
+            },
+            enableCoupon: false,
+            enableLoyalty: false
+          }
+        });
+      
+        console.log(response.result);
+      } catch(error) {
+        console.log(error);
+      }
+}
+
+function addtoCart()
+{
+    let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) || [];
+
+    for(i =0; i<cartIDs.length;i++)
+    {
+        lineItems = cartIDs.filter(getQuant)
+
+    }
+    
+
+
+}
+
