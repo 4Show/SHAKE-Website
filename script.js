@@ -1,3 +1,5 @@
+
+
 function toggleCart(cartNode, productId) 
 {
 
@@ -8,7 +10,7 @@ function toggleCart(cartNode, productId)
          // Get existing cart data from sessionStorage
          let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
          let cartCount = parseInt(sessionStorage.getItem('cartCount')) || 0;
-        //  let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) || [];
+         let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) || [];
          
         
          let productContainer = cartNode.parentElement.parentElement
@@ -25,8 +27,11 @@ function toggleCart(cartNode, productId)
                  // Get the label associated with the checked radio button
                 var sizeHold = radioButtonsLabel[index].innerText;
                 sizeSelected = true;
-                // cartIDs.push(radioButtonsLabel[index].value);
+                
+                var cartId = (radioButtonsLabel[index].querySelector("input").getAttribute("value"));
 
+                
+                
              }
          }
          
@@ -38,8 +43,11 @@ function toggleCart(cartNode, productId)
             price: productContainer.querySelector("div").getElementsByClassName("price")[0].innerHTML,
             size: sizeHold,
             image: productContainer.querySelector("img").getAttribute("src"),
-            quantity:1
+            quantity:1,
+            cartId: cartId
         };
+
+        
 
      
 
@@ -49,16 +57,17 @@ function toggleCart(cartNode, productId)
         }
         else{
             cart.push(product);
-          
-
+            cartIDs.push(cartId);
             cartCount++;
 
             // Update sessionStorage with the new cart data
             sessionStorage.setItem('cart', JSON.stringify(cart));
             sessionStorage.setItem('cartCount', cartCount);
-            // sessionStorage.setItem('cartIDs', cartIDs);
+            sessionStorage.setItem('cartIDs', JSON.stringify(cartIDs));
+            
             updateCartCountDisplay();
-           
+            
+            
         }
         
     }
@@ -67,7 +76,7 @@ function toggleCart(cartNode, productId)
         alert('Please select a product before adding to cart.');
     }
 
-    // sessionStorage.getItem("cartIDs");
+    
 
 }
 
@@ -85,7 +94,7 @@ function loadCart()
 
     //fixCart();
     // Get cart data from sessionStorage
-    let cart = JSON.parse(sessionStorage.getItem('cart'));
+    let cart = JSON.parse(sessionStorage.getItem('cart'))||[];
     // window.alert(cart.length);
 
 
@@ -153,7 +162,7 @@ function loadCart()
                 let minusBut = document.createElement("button");
                 minusBut.setAttribute("class", "minus-btn");
                 minusBut.addEventListener('click', function(){
-                    decreaseQuantity(this.parentElement);
+                    decreaseQuantity(this);
                     
                 });
                 minusBut.innerText = "-";
@@ -170,7 +179,7 @@ function loadCart()
                 plusBut.setAttribute("class", "plus-btn");
                 plusBut.innerText = "+";
                 plusBut.addEventListener('click', function(){
-                    increaseQuantity(this.parentElement);
+                    increaseQuantity(this);
                 });
             
             
@@ -245,20 +254,39 @@ function updateSubtotal()
     
         
 }
-function increaseQuantity(quantDiv) {
-    
+function increaseQuantity(quantButton) {
+
+    var quantDiv = quantButton.parentElement;
     var quantityInput = quantDiv.querySelector("input");
     var currentValue = parseInt(quantityInput.value);
+    let cart = JSON.parse(sessionStorage.getItem('cart'));
+    const buttons = document.querySelectorAll(".plus-btn");
     
+    //get the price element for the subtotal
     var priceIncrement = quantDiv.parentElement.querySelector(".productDescription").lastElementChild.innerText;
     var productPrice = parseFloat(priceIncrement.replace("$",''));
     
-    // let cartCount = parseInt(sessionStorage.getItem('cartCount'));
-    // cartCount +=1;
-    // sessionStorage.setItem("cartCount", cartCount);
+    //increment cart count in session storage variable
+    let cartCount = parseInt(sessionStorage.getItem('cartCount'));
+    window.alert(cartCount);
+    cartCount +=1;
+    sessionStorage.setItem("cartCount", cartCount);
 
-    
+    for(i=0;i<buttons.length; i++)
+    {
+        if(buttons[i] == quantButton)
+        {
+            itemInd = i;
+            cart[i].quantity +=1;
+            sessionStorage.setItem("cart", JSON.stringify(cart));
+            break;
+        }
+    }
+
     quantityInput.value = currentValue + 1;
+    
+    
+
     let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
     
     let currentSubtotal = subtotalElement.innerText.replace("Subtotal: $",'') 
@@ -267,30 +295,53 @@ function increaseQuantity(quantDiv) {
 
 }
 
-function decreaseQuantity(quantDiv) {
+
+
+function decreaseQuantity(quantButton) {
+   
+    var quantDiv = quantButton.parentElement;
     var quantityInput = quantDiv.querySelector("input");
     var currentValue = parseInt(quantityInput.value);
     quantityInput.value = currentValue - 1;
+    let cart = JSON.parse(sessionStorage.getItem('cart'));
+    let cartCount = JSON.parse(sessionStorage.getItem('cartCount'));
+    const buttons = document.querySelectorAll(".minus-btn");
+
+
+    //remove item from cart
+    var itemInd =0;
+
+    //delete cart item
+    for(i=0;i<buttons.length; i++)
+    {
+        if(buttons[i] == quantButton)
+        {
+            itemInd = i;
+            cart[itemInd].quantity -=1;
+            sessionStorage.setItem("cart",JSON.stringify(cart));
+            break;
+        }
+    }
+    
 
     if(quantityInput.value < 1)
     {
-        var itemDiv = quantDiv.parentElement.parentElement.remove();
-       
-        
-        // let cart = JSON.parse(sessionStorage.getItem('cart'));
-        // // TODO remove item from cart
-     
-    }
+        var itemDiv = quantDiv.parentElement.parentElement
     
-    // let cartCount = parseInt(sessionStorage.getItem('cartCount'));
-    // cartCount -=1;
-    // sessionStorage.setItem("cartCount", cartCount);
+        itemDiv.remove();
+        cart.splice(itemInd, 1);
+        sessionStorage.setItem("cart",JSON.stringify(cart));
+    }
+
+
+    //cartCount
+    cartCount -=1;
+    sessionStorage.setItem("cartCount", cartCount);
+
+    //subtotal
     var priceIncrement = quantDiv.parentElement.querySelector(".productDescription").lastElementChild.innerText;
     var productPrice = parseFloat(priceIncrement.replace("$",''));
-
-    
     let subtotalElement = document.querySelector(".subtotal").querySelector("h3");
-
     let currentSubtotal = subtotalElement.innerText.replace("Subtotal: $",'') 
     subtotal = parseFloat(currentSubtotal) - parseInt(productPrice);
     subtotalElement.innerText =  "Subtotal: $" + subtotal.toFixed(2);
@@ -368,17 +419,17 @@ function showSection(sectionId)
 }
 
 
-document.querySelector("cart-icon").addEventListener('click',function()
-{
-    let cart = JSON.parse(sessionStorage("cart"));
-    let subtotal = 0;
-    for(i = 0; i < cart.length ; i++)
-    {
-        subtotal += cart[i].price;
-    }
+// document.querySelector("cart-icon").addEventListener('click',function()
+// {
+//     let cart = JSON.parse(sessionStorage("cart"));
+//     let subtotal = 0;
+//     for(i = 0; i < cart.length ; i++)
+//     {
+//         subtotal += cart[i].price;
+//     }
 
    
-});
+// });
 
 function closeCart()
 {
@@ -388,61 +439,161 @@ function closeCart()
     updateCartCountDisplay();
 }
 
-async function createPaymentLink()
-{
-    lineItems = addtoCart();
+
+// async function createPaymentLink()
+// {
+    
+//     lineOrderItems = addtoCart()
+//     const httpBody = 
+//     {
+
+//         "description": "SHK Apparel",
+//         "order": 
+//         {
+//             "location_id": "L96PW6T2031NW",
+//             "line_items": JSON.stringify(lineOrderItems)
+//         },
+//         "checkout_options": 
+//         {
+//             "allow_tipping": false,
+//             "merchant_support_email": "4showinvestments@gmail.com",
+//             "ask_for_shipping_address": true,
+//             "accepted_payment_methods": 
+//             {
+//             "apple_pay": true,
+//             "google_pay": true,
+//             "cash_app_pay": true,
+//             "afterpay_clearpay": true
+//             },
+//             "enable_coupon": false,
+//             "enable_loyalty": false
+//         }
+//     }
+    
+//     try
+//     {
+//         const result = await fetch("https://connect.squareup.com/v2/online-checkout/payment-links", 
+//         {
+//             method: "POST",
+            
+//             headers: 
+//             {
+//                 "Content-type": "application/json; charset=UTF-8",
+//                 "Accept": "application/json",
+//                 "Authorization": "Bearer EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs",
+//                 "mode": "no-cors",
+//                 'Access-Control-Allow-Origin': '*'
+//             },
+            
+//             body: JSON.stringify(httpBody)
+
+//         });
+//         const data = await result.json();
+
+//         if(!result.ok)
+//         {
+//             console.log("problem");
+//             return;
+//         }
+//         console.log(data.url);
+
+//     }
+//     catch(error)
+//     {
+//         console.log(error)
+//     }
+// }
 
 
-    try {
-        const response = await client.checkoutApi.createPaymentLink({
-          description: 'SHK Apparel',
-          order: {
-            locationId: 'L96PW6T2031NW',
-            lineItems: [
-              {
-                quantity: '1',
-                catalogObjectId: 'YE5IZG3MRWPGUTU6AAHJJOLR',
-                itemType: 'ITEM'
-              },
-              {
-                quantity: '1',
-                catalogObjectId: 'XPW67JJWOQUJT63ANITAESSV',
-                itemType: 'ITEM'
-              }
-            ]
-          },
-          checkoutOptions: {
-            allowTipping: false,
-            merchantSupportEmail: '4showinvestments@gmail.com',
-            askForShippingAddress: true,
-            acceptedPaymentMethods: {
-              applePay: true,
-              googlePay: true,
-              cashAppPay: true,
-              afterpayClearpay: true
-            },
-            enableCoupon: false,
-            enableLoyalty: false
-          }
-        });
+// 
+
+
+// async function createPaymentLink()
+// {
+    
+    
+
+//     const { Client, Environment, ApiError } = require('square')
+
+//     const client = new Client({
+//         accessToken: "EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs",
+//         environment: Environment.Production
+//     });
+
+//     const { checkoutApi}=client;
+
+//     lineOrderItems = addtoCart()
+    
+    
+//     try {
+//         const response = await checkoutApi.createPaymentLink({
+//           description: 'SHK Apparel',
+//           order: {
+//             locationId: 'L96PW6T2031NW',
+//             lineItems: JSON.stringify(lineOrderItems)
+//           },
+//           checkoutOptions: {
+//             allowTipping: false,
+//             merchantSupportEmail: '4showinvestments@gmail.com',
+//             askForShippingAddress: true,
+//             acceptedPaymentMethods: {
+//               applePay: true,
+//               googlePay: true,
+//               cashAppPay: true,
+//               afterpayClearpay: true
+//             },
+//             enableCoupon: false,
+//             enableLoyalty: false
+//           }
+//         });
       
-        console.log(response.result);
-      } catch(error) {
-        console.log(error);
-      }
+//         console.log(response.result);
+//       } 
+//       catch(error) 
+//       {
+//         console.log(error);
+//       }
+    
+      
+    
+// }
+
+function callPaymentLink()
+{
+    $.ajax({
+        type: "POST",
+        url: "square-checkout.py"
+    });
+
 }
 
 function addtoCart()
 {
-    let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) || [];
+    let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) ;
+    let lineOrderItems = JSON.parse(sessionStorage.getItem('lineOrderItems')) || [];
+    window.alert(cartIDs);
 
     for(i =0; i<cartIDs.length;i++)
     {
-        lineItems = cartIDs.filter(getQuant)
-
-    }
+        // numProducts = cartIDs.filter(getQuant);
+        // window.alert(numProducts);
+        let product = 
+        {
+            quantity: '1',
+            catalogObjectId: cartIDs[i],
+            itemType: 'ITEM'
+        
+        }
+        
+        lineOrderItems.push(product);
+        
     
-
-
+    }
+    return lineOrderItems;
 }
+
+// function getQuant()
+// {
+
+// }
 
