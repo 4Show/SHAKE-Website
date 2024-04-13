@@ -173,11 +173,19 @@ body {
     width: 100%;
     justify-content: space-between;
     align-items: center;
+    border-width: 10%;
+    border-color: black;
+  }
+
+  .subscribe , .subscribeInput
+  {
+    box-sizing: border-box;
   }
 
   .footerDiv{
     display: inline-block;
     background-color: inherit;
+    box-sizing: border-box;
   }
   
   .left-section{
@@ -232,6 +240,14 @@ body {
   
   form {
     margin-top: 20px;
+  }
+
+
+  .contactForm input, .contactForm textarea
+  {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
   
   form label,

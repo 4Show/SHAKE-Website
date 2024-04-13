@@ -268,7 +268,6 @@ function increaseQuantity(quantButton) {
     
     //increment cart count in session storage variable
     let cartCount = parseInt(sessionStorage.getItem('cartCount'));
-    window.alert(cartCount);
     cartCount +=1;
     sessionStorage.setItem("cartCount", cartCount);
 
