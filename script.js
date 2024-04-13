@@ -86,7 +86,7 @@ function showCart()
 {
      //transitions the cart open
      transWin = document.querySelector(".cartTab");
-     transWin.style.right = "0px";
+     transWin.style.right = "0%";
 }
 
 function loadCart()
