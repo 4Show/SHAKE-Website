@@ -1,9 +1,34 @@
+html
+{
+  font-size: 16px;
+  width: 100%;
+}
+
+@media screen and (max-width: 480x)
+{
+  html{
+    font-size: 4px;
+  }
+  .product-scroll {
+    
+    width:100%;
+    overflow-x: auto;
+  }
+  .product-item img {
+    max-width: 100%;
+    max-height:100%;
+    height: auto;
+    border-radius: 5px;
+  }
+}
+
 body {
     font-family: 'Georgia', 'Times New Roman', Times, serif;
     margin: 0;
     padding: 0;
     background-color: #f8f4eb;
     color: #333;
+    width: 100%;
   }
   
   header {
@@ -83,17 +108,20 @@ body {
     display: inline-flexbox;
     flex-direction: column;
     align-items: center;
+    width:80%;
   }
   
   .product-item {
-    margin-bottom: 40px;
+    margin-bottom: 2%;
     display: inline-flex;
     align-items: stretch;
-    margin-top: 40px;
+    margin-top: 2%;
+    width:100%;
+    columns: 2 50%;
   }
   
   .product-item img {
-    width: 60%;
+    width: 50%;
     height: auto;
     border-radius: 5px;
   }
@@ -105,7 +133,7 @@ body {
     padding-left: 20px; /* Add padding to the left of product details */
     overflow-wrap: break-word;
     display: inline-block;
-    width: 40%;
+    width: 50%;
     height: auto;
   }
   
@@ -156,7 +184,7 @@ body {
     text-align: center;
     /* background-color: black; */
     height: 20px;
-    font-size: 100%;
+    font-size: 1rem;
     margin: 0%;
   }
 
@@ -175,7 +203,9 @@ body {
     align-items: center;
     border-width: 10%;
     border-color: black;
+    columns: 2 50%;
   }
+
 
   .subscribe , .subscribeInput
   {
@@ -186,30 +216,56 @@ body {
     display: inline-block;
     background-color: inherit;
     box-sizing: border-box;
+    width:100%;
   }
   
   .left-section{
     background-color: inherit;
     float: left;
-    text-align: center;
-    width: 70%;
+    justify-content: center; /* Align items horizontally at the center */
+    align-items: center; /* Align items vertically at the center */
+    max-width: 50%;
     height: auto;
+    display: flex;
   }
   .left-section img {
+    padding-top: 0%;
+    width: 100%;
     max-width: 100%;
     height: auto;
+    text-align: center;
+    
   }
   
   .right-section {
-    flex-direction: column;
-    align-items: flex-end;
+    justify-content: center; /* Align items horizontally at the center */
+    align-items: center; /* Align items vertically at the center */
+    
     float: right;
     background-color: inherit;
-    width: 30%;
+    width: 50%;
+    max-width: 50%;
     height: auto;
-    margin-top: 10px;
     
-    
+    vertical-align: middle;
+   
+  }
+
+  .follow-us, .subscribe
+  {
+    align-items: center;
+    justify-content:center;
+    max-width: 100%;
+    width: 100%;
+    grid-row: inherit;
+    padding-left: 15%;
+    height: auto;
+   
+  }
+
+  .subscribe{
+    float:left;
+    padding-top: 10%;
   }
 
   .follow{
@@ -217,17 +273,17 @@ body {
   }
   
   .follow-us a {
-    margin-right: 10px;
     display: inline-block;
     text-align: left;
     width: 20%;
     height: auto;
-    margin-top: 20px;
+    margin-bottom: 0%;
+    columns: 4 20%;
+
+  
   }
   
-  .subscribe {
-    margin-top: 0.4in;
-  }
+
   
   .subscribe label,
   .subscribe input,
@@ -430,6 +486,7 @@ body {
   margin: 0;
   font-weight: 300;
 }
+
 
 .cartTab .btn
 {

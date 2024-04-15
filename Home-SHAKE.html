@@ -9,7 +9,14 @@
   <script type = "module" src="script.js"></script>
   <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
   <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
-  
+  <style>
+    @media screen and (max-width: 480x)
+    {
+      html{
+        font-size: 10px;
+      }
+    }
+  </style>
 </head>
 
 
@@ -247,14 +254,15 @@
           
         </div>
         <div class="subtotal"><h3></h3></div>
-        <div class="btn">
+        <div class="btn" style = "height: 20%">
           <button class="close" onclick="closeCart()">CLOSE</button>
-          <button class="checkout" onclick="loadCart()">PROCEED TO CHECKOUT</button>
+          <button class="checkout" onclick="createPaymentLink()">PROCEED TO CHECKOUT</button>
         </div>
       </div>
 
       <footer>
-        <h4>&copy; 2018 SHAKE - Luxury Streetwear. All rights reserved.</h4>
+        <h4>&copy; 2018 SHAKE - Luxury Streetwear.</h4>
+        <h4> All rights reserved.</h4>
         
         
         <div class="footerDiv">

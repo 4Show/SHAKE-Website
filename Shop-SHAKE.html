@@ -13,17 +13,19 @@
   </script>
   <style> 
     .product-scroll {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      grid-auto-rows: 4 100%;
     }
     
     .product-item {
-        margin: 30px;
+        margin: 2%;
         align-items: center;
-        width: 100%;
+        /* width: 100%; */
         height: auto;
+        columns: 2 40%;
     }
     
     .product-item img {
@@ -304,12 +306,13 @@
         <div class="subtotal"><h3></h3></div>
         <div class="btn">
           <button class="close" onclick="closeCart()">CLOSE</button>
-          <button class="checkout" onclick="">PROCEED TO CHECKOUT</button>
+          <button class="checkout" onclick="createPaymentLink()">PROCEED TO CHECKOUT</button>
         </div>
       </div>
 
       <footer>
-        <h4>&copy; 2018 SHAKE - Luxury Streetwear. All rights reserved.</h4>
+        <h4>&copy; 2018 SHAKE - Luxury Streetwear.</h4>
+        <h4> All rights reserved.</h4>
         
         <div class="footerDiv">
           <div class="left-section">

@@ -56,7 +56,26 @@ function toggleCart(cartNode, productId)
             alert("Please select a size before adding to cart");
         }
         else{
-            cart.push(product);
+            var i=0;
+            while(i < cart.length)
+            {
+                if(cart[i].name == product.name && cart[i].size == product.size)
+                {
+                    var found = true;
+                    break;
+                }
+                i++;
+            }
+
+            if(found == true)
+            {
+                cart[i].quantity +=1;
+                sessionStorage.setItem(cart, JSON.stringify(cart));
+            }
+            else{
+                cart.push(product);
+                
+            }
             cartIDs.push(cartId);
             cartCount++;
 
@@ -439,69 +458,69 @@ function closeCart()
 }
 
 
-// async function createPaymentLink()
-// {
+async function createPaymentLink()
+{
     
-//     lineOrderItems = addtoCart()
-//     const httpBody = 
-//     {
+    lineOrderItems = addtoCart()
+    const httpBody = 
+    {
 
-//         "description": "SHK Apparel",
-//         "order": 
-//         {
-//             "location_id": "L96PW6T2031NW",
-//             "line_items": JSON.stringify(lineOrderItems)
-//         },
-//         "checkout_options": 
-//         {
-//             "allow_tipping": false,
-//             "merchant_support_email": "4showinvestments@gmail.com",
-//             "ask_for_shipping_address": true,
-//             "accepted_payment_methods": 
-//             {
-//             "apple_pay": true,
-//             "google_pay": true,
-//             "cash_app_pay": true,
-//             "afterpay_clearpay": true
-//             },
-//             "enable_coupon": false,
-//             "enable_loyalty": false
-//         }
-//     }
+        "description": "SHK Apparel",
+        "order": 
+        {
+            "location_id": "L96PW6T2031NW",
+            "line_items": JSON.stringify(lineOrderItems)
+        },
+        "checkout_options": 
+        {
+            "allow_tipping": false,
+            "merchant_support_email": "4showinvestments@gmail.com",
+            "ask_for_shipping_address": true,
+            "accepted_payment_methods": 
+            {
+            "apple_pay": true,
+            "google_pay": true,
+            "cash_app_pay": true,
+            "afterpay_clearpay": true
+            },
+            "enable_coupon": false,
+            "enable_loyalty": false
+        }
+    }
     
-//     try
-//     {
-//         const result = await fetch("https://connect.squareup.com/v2/online-checkout/payment-links", 
-//         {
-//             method: "POST",
+    try
+    {
+        const result = await fetch("https://connect.squareup.com/v2/online-checkout/payment-links", 
+        {
+            method: "POST",
             
-//             headers: 
-//             {
-//                 "Content-type": "application/json; charset=UTF-8",
-//                 "Accept": "application/json",
-//                 "Authorization": "Bearer EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs",
-//                 "mode": "no-cors",
-//                 'Access-Control-Allow-Origin': '*'
-//             },
+            headers: 
+            {
+                "Content-type": "application/json; charset=UTF-8",
+                "Accept": "application/json",
+                "Authorization": "Bearer EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs",
+                "mode": "no-cors",
+                'Access-Control-Allow-Origin': '*'
+            },
             
-//             body: JSON.stringify(httpBody)
+            body: JSON.stringify(httpBody)
 
-//         });
-//         const data = await result.json();
+        });
+        const data = await result.json();
 
-//         if(!result.ok)
-//         {
-//             console.log("problem");
-//             return;
-//         }
-//         console.log(data.url);
+        if(!result.ok)
+        {
+            console.log("problem");
+            return;
+        }
+        console.log(data.url);
 
-//     }
-//     catch(error)
-//     {
-//         console.log(error)
-//     }
-// }
+    }
+    catch(error)
+    {
+        console.log(error)
+    }
+}
 
 
 // 
@@ -568,18 +587,17 @@ function callPaymentLink()
 
 function addtoCart()
 {
-    let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) ;
+    let cart = JSON.parse(sessionStorage.getItem('cart')) ;
     let lineOrderItems = JSON.parse(sessionStorage.getItem('lineOrderItems')) || [];
     window.alert(cartIDs);
 
-    for(i =0; i<cartIDs.length;i++)
+    for(i =0; i<cart.length;i++)
     {
-        // numProducts = cartIDs.filter(getQuant);
-        // window.alert(numProducts);
+       
         let product = 
         {
-            quantity: '1',
-            catalogObjectId: cartIDs[i],
+            quantity: cart[i].quantity,
+            catalogObjectId: caret[i].cartId,
             itemType: 'ITEM'
         
         }
