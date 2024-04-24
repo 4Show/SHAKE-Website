@@ -10,11 +10,37 @@
   <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
   <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
   <style>
-    @media screen and (max-width: 480x)
+    @media screen and (max-width: 1130px)
     {
-      html{
-        font-size: 10px;
-      }
+    html{
+      font-size: 12px;
+    }
+    .product-scroll {
+      
+      width:100%;
+      overflow-x: auto;
+      display:flex;
+     
+      align-items: center;
+    }
+    .product-item img {
+      max-width: 100%;
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .product-item
+    {
+      display: flex;
+      align-items: center;
+    }
+    .product-details
+    {
+      justify-content: center;
+      align-items: center;
+      display:inline-block;
+    }
     }
   </style>
 </head>
