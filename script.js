@@ -458,132 +458,8 @@ function closeCart()
 }
 
 
-async function createPaymentLink()
-{
-    
-    lineOrderItems = addtoCart()
-    const httpBody = 
-    {
-
-        "description": "SHK Apparel",
-        "order": 
-        {
-            "location_id": "L96PW6T2031NW",
-            "line_items": JSON.stringify(lineOrderItems)
-        },
-        "checkout_options": 
-        {
-            "allow_tipping": false,
-            "merchant_support_email": "4showinvestments@gmail.com",
-            "ask_for_shipping_address": true,
-            "accepted_payment_methods": 
-            {
-            "apple_pay": true,
-            "google_pay": true,
-            "cash_app_pay": true,
-            "afterpay_clearpay": true
-            },
-            "enable_coupon": false,
-            "enable_loyalty": false
-        }
-    }
-    
-    try
-    {
-        const result = await fetch("https://connect.squareup.com/v2/online-checkout/payment-links", 
-        {
-            method: "POST",
-            
-            headers: 
-            {
-                "Content-type": "application/json; charset=UTF-8",
-                "Accept": "application/json",
-                "Authorization": "Bearer EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs",
-                "mode": "no-cors",
-                'Access-Control-Allow-Origin': '*'
-            },
-            
-            body: JSON.stringify(httpBody)
-
-        });
-        const data = await result.json();
-
-        if(!result.ok)
-        {
-            console.log("problem");
-            return;
-        }
-        console.log(data.url);
-
-    }
-    catch(error)
-    {
-        console.log(error)
-    }
-}
 
 
-// 
-
-
-// async function createPaymentLink()
-// {
-    
-    
-
-//     const { Client, Environment, ApiError } = require('square')
-
-//     const client = new Client({
-//         accessToken: "EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs",
-//         environment: Environment.Production
-//     });
-
-//     const { checkoutApi}=client;
-
-//     lineOrderItems = addtoCart()
-    
-    
-//     try {
-//         const response = await checkoutApi.createPaymentLink({
-//           description: 'SHK Apparel',
-//           order: {
-//             locationId: 'L96PW6T2031NW',
-//             lineItems: JSON.stringify(lineOrderItems)
-//           },
-//           checkoutOptions: {
-//             allowTipping: false,
-//             merchantSupportEmail: '4showinvestments@gmail.com',
-//             askForShippingAddress: true,
-//             acceptedPaymentMethods: {
-//               applePay: true,
-//               googlePay: true,
-//               cashAppPay: true,
-//               afterpayClearpay: true
-//             },
-//             enableCoupon: false,
-//             enableLoyalty: false
-//           }
-//         });
-      
-//         console.log(response.result);
-//       } 
-//       catch(error) 
-//       {
-//         console.log(error);
-//       }
-    
-      
-    
-// }
-
-function callPaymentLink()
-{
-    $.ajax({
-        type: "POST",
-        url: "square-checkout.py"
-    });
-
-}
 
 function addtoCart()
 {
@@ -597,7 +473,7 @@ function addtoCart()
         let product = 
         {
             quantity: cart[i].quantity,
-            catalogObjectId: caret[i].cartId,
+            catalogObjectId: cart[i].cartId,
             itemType: 'ITEM'
         
         }
@@ -606,11 +482,19 @@ function addtoCart()
         
     
     }
-    return lineOrderItems;
+    
+    lineOrderItemsJson.push(lineOrderItems);
+
+    fs.writeFile(
+        "lineOrderItems.json",
+        JSON.stringify(lineOrderItems),
+        err => {
+            // Checking for errors 
+            if (err) throw err;
+    
+            // Success 
+            console.log("Done writing");
+        }); 
 }
 
-// function getQuant()
-// {
-
-// }
 

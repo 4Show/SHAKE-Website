@@ -7,8 +7,12 @@
   <link rel="stylesheet" href="HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
   <script type = "module" src="script.js"></script>
-  <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+  <script type = "module" src="quickstart.js"></script>
+  <!-- PyScript CSS -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+  <!-- This script tag bootstraps PyScript -->
   <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+  <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
   <style>
     @media screen and (max-width: 1130px)
     {
@@ -64,7 +68,7 @@
 
          
 
-            document.addEventListener('DomContentLoaded',updateCartCountDisplay);
+          
 
          </script>
         
@@ -282,7 +286,7 @@
         <div class="subtotal"><h3></h3></div>
         <div class="btn" style = "height: 20%">
           <button class="close" onclick="closeCart()">CLOSE</button>
-          <button class="checkout" onclick="createPaymentLink()">PROCEED TO CHECKOUT</button>
+          <button class="checkout" onclick = "callPaymentLink()">PROCEED TO CHECKOUT</button>
         </div>
       </div>
 
@@ -324,7 +328,7 @@
       </footer>
       <script src="script.js"></script>
 
-      <!-- <script type= "py" src = "square-checkout.py" config = "pyscript.toml"></script> -->
+     
 
       
 </body>   

@@ -1,0 +1,3 @@
+{
+    "packages": ["arrr","pandas","webbrowser", "fastapi", "square.client"]
+}

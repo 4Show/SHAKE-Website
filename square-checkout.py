@@ -1,14 +1,15 @@
+import json
 from square.client import Client
 import requests
 import webbrowser
 import pyscript
-from fastapi import FastAPI
+import os
 
-createPaymentLink()
-def createPaymentLink():
+def lambda_handler(event,context):
+
+
     client = Client(
-        access_token = 'EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs',
-        # access_token='Bearer EAAAFBT_k2zBJK0mLuu2hqIeVb4Rj8VqoKfZoatED1hZlFcIW82-qgRtp7o8-ZIs',
+        access_token = os.environ['SQUARE_ACCESS_TOKEN'],
         environment = 'production'
     )
 
@@ -61,3 +62,4 @@ def createPaymentLink():
 
 def goToCheckOutPage(url):
     webbrowser.open(url)  # Go to example.com
+
