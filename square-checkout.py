@@ -2,7 +2,6 @@ import json
 from square.client import Client
 import requests
 import webbrowser
-import pyscript
 import os
 
 def lambda_handler(event,context):
@@ -54,11 +53,16 @@ def lambda_handler(event,context):
 
     if result.is_success():
         url = result.body['payment_link']['url']
+        return {
+        'statusCode': 200,
+        'body': url
+        }
         goToCheckOutPage(url)  # Go to example.com
     elif result.is_error():
-        print(result.errors)
-
-
+        return {
+            'statusCode': 400,
+            'body': json.dumps('Request failed')
+        }
 
 def goToCheckOutPage(url):
     webbrowser.open(url)  # Go to example.com

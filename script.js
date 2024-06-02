@@ -457,8 +457,31 @@ function closeCart()
     updateCartCountDisplay();
 }
 
+async function callPaymentLink()
+{
 
+    const awsEndpoint = 'https://wbib1en70a.execute-api.us-east-1.amazonaws.com/prod';
 
+    try {
+        const response = await fetch(awsEndpoint, 
+        {
+            method: 'POST', // or 'GET', 'PUT', etc.
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ key1: 'value1', key2: 'value2' }) // Replace with your actual request body if needed
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
+}
 
 
 function addtoCart()
