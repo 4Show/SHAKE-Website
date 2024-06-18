@@ -55,7 +55,9 @@ def lambda_handler(event,context):
         url = result.body['payment_link']['url']
         return {
         'statusCode': 200,
-        'body': url
+        'body': json.dumps({
+                'message': url 
+            })
         }
         goToCheckOutPage(url)  # Go to example.com
     elif result.is_error():
@@ -67,3 +69,8 @@ def lambda_handler(event,context):
 def goToCheckOutPage(url):
     webbrowser.open(url)  # Go to example.com
 
+
+import requests
+
+response = requests.get("https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/")
+print(response.text)

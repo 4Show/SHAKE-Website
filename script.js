@@ -460,27 +460,36 @@ function closeCart()
 async function callPaymentLink()
 {
 
-    const awsEndpoint = 'https://wbib1en70a.execute-api.us-east-1.amazonaws.com/prod';
+    // const awsEndpoint = 'https://wbib1en70a.execute-api.us-east-1.amazonaws.com/SquareAPI';
+    const awsEndpoint = "https://82nxujrefe.execute-api.us-east-1.amazonaws.com/createPaymentLink";
+    // const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
 
     try {
         const response = await fetch(awsEndpoint, 
         {
-            method: 'POST', // or 'GET', 'PUT', etc.
+            method: 'GET', // or 'GET', 'PUT', etc.
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ key1: 'value1', key2: 'value2' }) // Replace with your actual request body if needed
+            
         });
 
         if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
         }
-
-        const data = await response.json();
-        console.log(data);
+        
+        let data = await response.text();
+        redirect(data);
+        
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     }
+}
+
+function redirect(result)
+{
+    
+    window.location.href  = result
 }
 
 
