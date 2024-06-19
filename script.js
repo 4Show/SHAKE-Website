@@ -451,50 +451,50 @@ async function callPaymentLink()
     const awsEndpoint = "https://82nxujrefe.execute-api.us-east-1.amazonaws.com/createPaymentLink";
     const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
     // var params = new URLSearchParams();
-    var lineOrderItems = []
+    // var lineOrderItems = []
 
-    // Get cart data from sessionStorage
-    let cart = JSON.parse(sessionStorage.getItem('cart'))||[];
+    // // Get cart data from sessionStorage
+    // let cart = JSON.parse(sessionStorage.getItem('cart'))||[];
 
-    for(let i = 0; i< cart.length; i++)
-    {
-        var cartID = cart[i].cartId;
-        var quantity = cart[i].quantity;
+    // for(let i = 0; i< cart.length; i++)
+    // {
+    //     var cartID = cart[i].cartId;
+    //     var quantity = cart[i].quantity;
 
         
-        lineOrderItems[i] =  {
-            "quantity": quantity,
-            "catalog_object_id": cartID,
-            "item_type": "ITEM"
-            }
-    }
+    //     lineOrderItems[i] =  {
+    //         "quantity": quantity,
+    //         "catalog_object_id": cartID,
+    //         "item_type": "ITEM"
+    //         }
+    // }
     
-    // window.alert(params);
-    // Use the parameters in a URL
-    // var urlWithParams = `${url}?${params.toString()}`;
-    bodyContent = {
-        "description": "SHK Apparel",
-        "order": {
-        "location_id": "L96PW6T2031NW",
-        "line_items": [
-            {
-            "quantity": "1",
-            "catalog_object_id": "YE5IZG3MRWPGUTU6AAHJJOLR",
-            "item_type": "ITEM"
-            },
-            {
-            "quantity": "1",
-            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
-            "item_type": "ITEM"
-            },
-            {
-            "quantity": "1",
-            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
-            "item_type": "ITEM"
-            }
-        ]
-        } 
-       }
+    // // window.alert(params);
+    // // Use the parameters in a URL
+    // // var urlWithParams = `${url}?${params.toString()}`;
+    // bodyContent = {
+    //     "description": "SHK Apparel",
+    //     "order": {
+    //     "location_id": "L96PW6T2031NW",
+    //     "line_items": [
+    //         {
+    //         "quantity": "1",
+    //         "catalog_object_id": "YE5IZG3MRWPGUTU6AAHJJOLR",
+    //         "item_type": "ITEM"
+    //         },
+    //         {
+    //         "quantity": "1",
+    //         "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+    //         "item_type": "ITEM"
+    //         },
+    //         {
+    //         "quantity": "1",
+    //         "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+    //         "item_type": "ITEM"
+    //         }
+    //     ]
+    //     } 
+    //    }
 
     // bodyContentFull = {
     //     "description": "SHK Apparel",
@@ -554,8 +554,3 @@ async function callPaymentLink()
         console.error('There was a problem with the fetch operation:', error);
     }
 }
-
-
-
-
-

@@ -12,12 +12,27 @@ def lambda_handler(event,context):
         environment = 'production'
     )
 
-    # hold = event["description"]
     bodyContent = {
-        "description": event["description"],
+        "description": "SHK Apparel",
         "order": {
-        "location_id": event["order"]["location_id"],
-        "line_items": event["order"]["line_items"]
+        "location_id": "L96PW6T2031NW",
+        "line_items": [
+            {
+            "quantity": "1",
+            "catalog_object_id": "YE5IZG3MRWPGUTU6AAHJJOLR",
+            "item_type": "ITEM"
+            },
+            {
+            "quantity": "1",
+            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+            "item_type": "ITEM"
+            },
+            {
+            "quantity": "1",
+            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+            "item_type": "ITEM"
+            }
+        ]
         },
         "checkout_options": {
         "allow_tipping": False,
@@ -33,9 +48,9 @@ def lambda_handler(event,context):
         "enable_loyalty": False
         }
     }
-
     result = client.checkout.create_payment_link(
         body = bodyContent
+    
     )
 
     if result.is_success():
@@ -51,4 +66,8 @@ def lambda_handler(event,context):
             'statusCode': 400,
             'body': json.dumps('Request failed')
         }
+
+def goToCheckOutPage(url):
+    webbrowser.open(url)  # Go to example.com
+
 
