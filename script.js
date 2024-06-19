@@ -436,19 +436,6 @@ function showSection(sectionId)
     activeSection.classList.add('active');
 }
 
-
-// document.querySelector("cart-icon").addEventListener('click',function()
-// {
-//     let cart = JSON.parse(sessionStorage("cart"));
-//     let subtotal = 0;
-//     for(i = 0; i < cart.length ; i++)
-//     {
-//         subtotal += cart[i].price;
-//     }
-
-   
-// });
-
 function closeCart()
 {
     closeBtn = document.querySelector(".cartTab");
@@ -462,15 +449,97 @@ async function callPaymentLink()
 
     // const awsEndpoint = 'https://wbib1en70a.execute-api.us-east-1.amazonaws.com/SquareAPI';
     const awsEndpoint = "https://82nxujrefe.execute-api.us-east-1.amazonaws.com/createPaymentLink";
-    // const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
+    const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
+    // var params = new URLSearchParams();
+    var lineOrderItems = []
+
+    // Get cart data from sessionStorage
+    let cart = JSON.parse(sessionStorage.getItem('cart'))||[];
+
+    for(let i = 0; i< cart.length; i++)
+    {
+        var cartID = cart[i].cartId;
+        var quantity = cart[i].quantity;
+
+        
+        lineOrderItems[i] =  {
+            "quantity": quantity,
+            "catalog_object_id": cartID,
+            "item_type": "ITEM"
+            }
+    }
+    
+    // window.alert(params);
+    // Use the parameters in a URL
+    // var urlWithParams = `${url}?${params.toString()}`;
+    bodyContent = {
+        "description": "SHK Apparel",
+        "order": {
+        "location_id": "L96PW6T2031NW",
+        "line_items": [
+            {
+            "quantity": "1",
+            "catalog_object_id": "YE5IZG3MRWPGUTU6AAHJJOLR",
+            "item_type": "ITEM"
+            },
+            {
+            "quantity": "1",
+            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+            "item_type": "ITEM"
+            },
+            {
+            "quantity": "1",
+            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+            "item_type": "ITEM"
+            }
+        ]
+        } 
+       }
+
+    // bodyContentFull = {
+    //     "description": "SHK Apparel",
+    //     "order": {
+    //     "location_id": "L96PW6T2031NW",
+    //     "line_items": [
+    //         {
+    //         "quantity": "1",
+    //         "catalog_object_id": "YE5IZG3MRWPGUTU6AAHJJOLR",
+    //         "item_type": "ITEM"
+    //         },
+    //         {
+    //         "quantity": "1",
+    //         "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+    //         "item_type": "ITEM"
+    //         },
+    //         {
+    //         "quantity": "1",
+    //         "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
+    //         "item_type": "ITEM"
+    //         }
+    //     ]
+    //     },
+    //     "checkout_options": {
+    //     "allow_tipping": False,
+    //     "merchant_support_email": "4showinvestments@gmail.com",
+    //     "ask_for_shipping_address": True,
+    //     "accepted_payment_methods": {
+    //         "apple_pay": True,
+    //         "google_pay": True,
+    //         "cash_app_pay": True,
+    //         "afterpay_clearpay": True
+    //     },
+    //     "enable_coupon": False,
+    //     "enable_loyalty": False
+    //     }
+    // }
 
     try {
         const response = await fetch(awsEndpoint, 
         {
             method: 'GET', // or 'GET', 'PUT', etc.
             headers: {
-                'Content-Type': 'application/json',
-            },
+                'Content-Type': 'application/json'
+            }
             
         });
 
@@ -479,54 +548,14 @@ async function callPaymentLink()
         }
         
         let data = await response.text();
-        redirect(data);
+        window.location.href  = data;
         
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     }
 }
 
-function redirect(result)
-{
-    
-    window.location.href  = result
-}
 
 
-function addtoCart()
-{
-    let cart = JSON.parse(sessionStorage.getItem('cart')) ;
-    let lineOrderItems = JSON.parse(sessionStorage.getItem('lineOrderItems')) || [];
-    window.alert(cartIDs);
-
-    for(i =0; i<cart.length;i++)
-    {
-       
-        let product = 
-        {
-            quantity: cart[i].quantity,
-            catalogObjectId: cart[i].cartId,
-            itemType: 'ITEM'
-        
-        }
-        
-        lineOrderItems.push(product);
-        
-    
-    }
-    
-    lineOrderItemsJson.push(lineOrderItems);
-
-    fs.writeFile(
-        "lineOrderItems.json",
-        JSON.stringify(lineOrderItems),
-        err => {
-            // Checking for errors 
-            if (err) throw err;
-    
-            // Success 
-            console.log("Done writing");
-        }); 
-}
 
 

@@ -12,28 +12,12 @@ def lambda_handler(event,context):
         environment = 'production'
     )
 
-    result = client.checkout.create_payment_link(
-    body = {
-        "description": "SHK Apparel",
+    # hold = event["description"]
+    bodyContent = {
+        "description": event["description"],
         "order": {
-        "location_id": "L96PW6T2031NW",
-        "line_items": [
-            {
-            "quantity": "1",
-            "catalog_object_id": "YE5IZG3MRWPGUTU6AAHJJOLR",
-            "item_type": "ITEM"
-            },
-            {
-            "quantity": "1",
-            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
-            "item_type": "ITEM"
-            },
-            {
-            "quantity": "1",
-            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
-            "item_type": "ITEM"
-            }
-        ]
+        "location_id": event["order"]["location_id"],
+        "line_items": event["order"]["line_items"]
         },
         "checkout_options": {
         "allow_tipping": False,
@@ -49,15 +33,17 @@ def lambda_handler(event,context):
         "enable_loyalty": False
         }
     }
+
+    result = client.checkout.create_payment_link(
+        body = bodyContent
     )
 
     if result.is_success():
         url = result.body['payment_link']['url']
         return {
         'statusCode': 200,
-        'body': json.dumps({
-                'message': url 
-            })
+        'body': url 
+            
         }
         goToCheckOutPage(url)  # Go to example.com
     elif result.is_error():
@@ -66,11 +52,3 @@ def lambda_handler(event,context):
             'body': json.dumps('Request failed')
         }
 
-def goToCheckOutPage(url):
-    webbrowser.open(url)  # Go to example.com
-
-
-import requests
-
-response = requests.get("https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/")
-print(response.text)
