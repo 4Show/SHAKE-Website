@@ -462,7 +462,7 @@ async function callPaymentLink()
 
         
         lineOrderItems[i] =  {
-            "quantity": quantity,
+            "quantity": String(quantity),
             "catalog_object_id": cartID,
             "item_type": "ITEM"
             }
@@ -471,39 +471,32 @@ async function callPaymentLink()
     // window.alert(params);
     // Use the parameters in a URL
     // var urlWithParams = `${url}?${params.toString()}`;
-    bodyContent = {
-        "description": "SHK Apparel",
-        "order": {
-        "location_id": "L96PW6T2031NW",
-        "line_items": [
-            {
-            "quantity": "1",
-            "catalog_object_id": "YE5IZG3MRWPGUTU6AAHJJOLR",
-            "item_type": "ITEM"
-            },
-            {
-            "quantity": "1",
-            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
-            "item_type": "ITEM"
-            },
-            {
-            "quantity": "1",
-            "catalog_object_id": "XPW67JJWOQUJT63ANITAESSV",
-            "item_type": "ITEM"
-            }
-        ]
-        } 
-       }
+    // bodyContent = {
+    //     "lineOrderItems": lineOrderItems
+    // }
 
-   
+    bodyContent = {
+        // "description": "SHK Apparel",
+        "line_items": lineOrderItems,
+        // "allow_tipping": False,
+        // "ask_for_shipping_address": True,
+        // "apple_pay": True,
+        // "google_pay": True,
+        // "cash_app_pay": True,
+        // "afterpay_clearpay": True,
+        // "enable_coupon": False,
+        // "enable_loyalty": False
+        
+}
 
     try {
-        const response = await fetch(awsEndpoint, 
+        const response = await fetch(functionURL, 
         {
-            method: 'GET', // or 'GET', 'PUT', etc.
+            method: 'POST', // or 'GET', 'PUT', etc.
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(bodyContent)
             
         });
 
@@ -513,6 +506,7 @@ async function callPaymentLink()
         
         let data = await response.text();
         window.location.href  = data;
+
         
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
