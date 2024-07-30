@@ -14,7 +14,7 @@ function toggleCart(cartNode, productId)
          
         
          let productContainer = cartNode.parentElement.parentElement
-         let radioButtonsLabel = productContainer.querySelector("div").getElementsByClassName("button-group")[0].querySelectorAll("label");
+         let radioButtonsLabel = productContainer.querySelector(".product-details").getElementsByClassName("button-group")[0].querySelectorAll("label");
          let sizeSelected=false;
 
          for (index = 0; index < radioButtonsLabel.length; index++) 
@@ -38,9 +38,9 @@ function toggleCart(cartNode, productId)
 
         // Extract product information from the container
         let product = {
-            name: productContainer.querySelector("div").querySelector("h3").innerHTML,
-            description: productContainer.querySelector("div").querySelector("p").innerHTML,
-            price: productContainer.querySelector("div").getElementsByClassName("price")[0].innerHTML,
+            name: productContainer.querySelector(".product-details").querySelector("h3").innerHTML,
+            description: productContainer.querySelector(".product-details").querySelector("p").innerHTML,
+            price: productContainer.querySelector(".product-details").getElementsByClassName("price")[0].innerHTML,
             size: sizeHold,
             image: productContainer.querySelector("img").getAttribute("src"),
             quantity:1,
@@ -504,9 +504,148 @@ async function callPaymentLink()
             throw new Error('Network response was not ok ' + response.statusText);
         }
         
+        
         let data = await response.text();
+        console.log(data);
         window.location.href  = data;
 
+
+        
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    }
+}
+
+
+async function getCatalog()
+{
+    const awsEndpoint = "https://82nxujrefe.execute-api.us-east-1.amazonaws.com/getCatalog";
+    const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
+
+    try {
+        const response = await fetch(functionURL, 
+        {
+            method: 'GET', // or 'GET', 'PUT', etc.
+            headers: {
+                'Content-Type': 'application/json'
+            },
+           
+            
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        
+        //loop through the result and get all the items
+        let data = JSON.parse(await response.text());
+        console.log(JSON.parse(data.items[7]).custom_attributes);
+  
+        
+        
+
+        //loop through catalog items
+        for(i=0; i< data.items.length ; i++)
+        {
+            //get all the item vairbales for the current item
+            let productName = JSON.parse(data.items[i]).productName;
+            let productID = JSON.parse(data.items[i]).id;
+            let description = JSON.parse(data.items[i]).description;
+            let imgName = JSON.parse(data.items[i]).image[0];
+            let price ;
+          
+            //create div item node
+            var node = document.createElement("div");
+            // set up the div product-item
+            node.setAttribute("data-product-id",productID);
+            //set up the class name
+            node.setAttribute("class","product-item");
+
+
+            //set up img element
+            let pictureContainer = document.createElement("div");
+            pictureContainer.height = "100%";
+            pictureContainer.width = "100%";
+            pictureContainer.setAttribute("Class","pictureContainer");
+            let image = document.createElement("img");
+            image.setAttribute('src',imgName);
+            image.setAttribute("alt","Product" + i);
+            pictureContainer.append(image);
+            node.append(pictureContainer);
+
+            //set the product-details div class
+            let product_details = document.createElement("div")
+            product_details.setAttribute("class", "product-details");
+            node.append(product_details);
+
+            //product Name
+            let h3 = document.createElement("h3");
+            h3.innerText = productName;
+            product_details.append(h3);
+
+            //description
+            let descriptionPara = document.createElement("p");
+            descriptionPara.setAttribute("class","description");
+            descriptionPara.innerText = description;
+            product_details.append(descriptionPara);
+
+            //price
+            let pricePara = document.createElement("p");
+            pricePara.setAttribute("class","price");
+            product_details.append(pricePara);
+
+            //set button group attributes
+            let buttonGroup = document.createElement("div");
+            buttonGroup.setAttribute("class","button-group");
+            numVariations = (JSON.parse(data.items[i])).variations.length;
+            
+            //loops through the variations of the item
+            for(y=0;y < numVariations; y++)
+            {
+                //set price for the product
+                price = JSON.parse(JSON.parse(data.items[i]).variations[y]).price;
+
+                //create label node
+                let label = document.createElement("label");
+                label.addEventListener('click', function(){
+                    highlightButton(this);
+                    
+                });
+                //set label text
+                label.innerText = JSON.parse(JSON.parse(data.items[i]).variations[y]).size;
+                label.setAttribute("class", "button-label");
+
+                
+                //create input node
+                let input = document.createElement("input");
+                input.setAttribute("type", "radio");
+                input.setAttribute("name", "group "+ i);
+                input.setAttribute("class", "button");
+                label.appendChild(input);
+                //set variation id
+                input.setAttribute("value", JSON.parse(JSON.parse(data.items[i]).variations[y]).variation_id);
+            
+                buttonGroup.appendChild(label);
+                
+            }
+
+            pricePara.innerText = (price/100).toLocaleString("en-US", {style:"currency", currency:"USD"});
+            product_details.append(buttonGroup);
+
+            //create add to cart button
+            let addToCart = document.createElement("button");
+            addToCart.addEventListener('click', function(){
+                toggleCart(this, i);
+                loadCart();
+                
+            });
+            addToCart.setAttribute("class","add-to-cart")
+            addToCart.innerText = "Add To Cart";
+           
+            product_details.appendChild(addToCart);
+            document.getElementsByClassName("product-scroll")[0].appendChild(node);
+        }
+        
         
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
