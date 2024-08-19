@@ -1,5 +1,3 @@
-
-
 function toggleCart(cartNode, productId) 
 {
 
@@ -506,7 +504,7 @@ async function callPaymentLink()
         
         
         let data = await response.text();
-        console.log(data);
+        // console.log(data);
         window.location.href  = data;
 
 
@@ -517,7 +515,7 @@ async function callPaymentLink()
 }
 
 
-async function getCatalog()
+async function getCatalog(page)
 {
     const awsEndpoint = "https://82nxujrefe.execute-api.us-east-1.amazonaws.com/getCatalog";
     const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
@@ -539,20 +537,46 @@ async function getCatalog()
         
         //loop through the result and get all the items
         let data = JSON.parse(await response.text());
-        console.log(JSON.parse(data.items[7]).custom_attributes);
-  
+        let dataLength = JSON.parse(data.items).length
+        console.log(JSON.parse(data.items));
+        
         
         
 
         //loop through catalog items
-        for(i=0; i< data.items.length ; i++)
+        for(i=0; i< dataLength ; i++)
         {
-            //get all the item vairbales for the current item
-            let productName = JSON.parse(data.items[i]).productName;
-            let productID = JSON.parse(data.items[i]).id;
-            let description = JSON.parse(data.items[i]).description;
-            let imgName = JSON.parse(data.items[i]).image[0];
-            let price ;
+         
+            let productName = JSON.parse(data.items)[i].item_data.name;
+            let productID = JSON.parse(data.items)[i].id;
+            let description = JSON.parse(data.items)[i].item_data.description;
+            let imgIDs = JSON.parse(data.items)[i].item_data.image_ids;
+            let variations = JSON.parse(data.items)[i].item_data.variations;
+            let homePageAttribute;
+            let check;
+
+           
+            
+            //try to see if custom attributes are present 
+            try {
+                homePageAttribute = JSON.parse(data.items)[i].custom_attribute_values['Square:fb0e53e7-5b0a-4856-99ad-02f7c99e0476'].boolean_value;
+                console.log(homePageAttribute);
+
+                //check if the home page attribute is present
+                if(page == "HOME" && homePageAttribute ==  false)
+                {
+                    check = homePageAttribute;
+                    continue;
+                }
+             
+
+                
+            } catch (error) {
+                console.log("no custom attributes present");
+            }              
+        
+             
+            let price;
           
             //create div item node
             var node = document.createElement("div");
@@ -568,8 +592,19 @@ async function getCatalog()
             pictureContainer.width = "100%";
             pictureContainer.setAttribute("Class","pictureContainer");
             let image = document.createElement("img");
-            image.setAttribute('src',imgName);
+            if(homePageAttribute == true)
+            {
+                image.setAttribute('src',imgIDs[0]);
+            }
+            else{
+                image.setAttribute('src',imgIDs[0]);
+            }
+            
             image.setAttribute("alt","Product" + i);
+            // image.addEventListener('click', function(){
+            //     getImageName(imgIDs);
+                
+            // });
             pictureContainer.append(image);
             node.append(pictureContainer);
 
@@ -597,13 +632,13 @@ async function getCatalog()
             //set button group attributes
             let buttonGroup = document.createElement("div");
             buttonGroup.setAttribute("class","button-group");
-            numVariations = (JSON.parse(data.items[i])).variations.length;
+     
             
             //loops through the variations of the item
-            for(y=0;y < numVariations; y++)
+            for(y=0;y < variations.length; y++)
             {
                 //set price for the product
-                price = JSON.parse(JSON.parse(data.items[i]).variations[y]).price;
+                price = JSON.parse(variations[y].item_variation_data.price_money.amount);
 
                 //create label node
                 let label = document.createElement("label");
@@ -612,7 +647,7 @@ async function getCatalog()
                     
                 });
                 //set label text
-                label.innerText = JSON.parse(JSON.parse(data.items[i]).variations[y]).size;
+                label.innerText = variations[y].item_variation_data.name;
                 label.setAttribute("class", "button-label");
 
                 
@@ -623,7 +658,7 @@ async function getCatalog()
                 input.setAttribute("class", "button");
                 label.appendChild(input);
                 //set variation id
-                input.setAttribute("value", JSON.parse(JSON.parse(data.items[i]).variations[y]).variation_id);
+                input.setAttribute("value", variations[y].id);
             
                 buttonGroup.appendChild(label);
                 
@@ -651,3 +686,4 @@ async function getCatalog()
         console.error('There was a problem with the fetch operation:', error);
     }
 }
+
