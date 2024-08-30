@@ -504,7 +504,7 @@ async function callPaymentLink()
         
         
         let data = await response.text();
-        // console.log(data);
+        console.log(data);
         window.location.href  = data;
 
 
@@ -553,8 +553,7 @@ async function getCatalog(page)
             let imgIDs = JSON.parse(data.items)[i].item_data.image_ids;
             let variations = JSON.parse(data.items)[i].item_data.variations;
             let homePageAttribute;
-            let check;
-
+            
            
             
             //try to see if custom attributes are present 
@@ -565,7 +564,7 @@ async function getCatalog(page)
                 //check if the home page attribute is present
                 if(page == "HOME" && homePageAttribute ==  false)
                 {
-                    check = homePageAttribute;
+                    
                     continue;
                 }
              
