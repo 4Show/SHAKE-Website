@@ -65,7 +65,7 @@ function toggleCart(cartNode, productId)
                 i++;
             }
 
-            if(found == true)
+            if(found == true )
             {
                 cart[i].quantity +=1;
                 sessionStorage.setItem(cart, JSON.stringify(cart));
@@ -421,6 +421,16 @@ function highlightButton(label)
     label.classList.add('active');
 }
 
+function soldOut(input)
+{
+    input.parentElement.classList.add("sold_out");
+    console.log(input.disabled);
+    input.disabled = true;
+    console.log(input.disabled);
+    
+}
+
+
 function showSection(sectionId) 
 {
     // Hide all sections
@@ -504,7 +514,7 @@ async function callPaymentLink()
         
         
         let data = await response.text();
-        console.log(data);
+        // console.log(data);
         window.location.href  = data;
 
 
@@ -553,18 +563,18 @@ async function getCatalog(page)
             let imgIDs = JSON.parse(data.items)[i].item_data.image_ids;
             let variations = JSON.parse(data.items)[i].item_data.variations;
             let homePageAttribute;
-            
+            let check;
+
            
             
             //try to see if custom attributes are present 
             try {
                 homePageAttribute = JSON.parse(data.items)[i].custom_attribute_values['Square:fb0e53e7-5b0a-4856-99ad-02f7c99e0476'].boolean_value;
-                console.log(homePageAttribute);
 
                 //check if the home page attribute is present
                 if(page == "HOME" && homePageAttribute ==  false)
                 {
-                    
+                    check = homePageAttribute;
                     continue;
                 }
              
@@ -576,6 +586,7 @@ async function getCatalog(page)
         
              
             let price;
+            let sold_out_status;
           
             //create div item node
             var node = document.createElement("div");
@@ -638,13 +649,12 @@ async function getCatalog(page)
             {
                 //set price for the product
                 price = JSON.parse(variations[y].item_variation_data.price_money.amount);
+                sold_out_status = variations[y].item_variation_data.location_overrides[0].sold_out;
+                // console.log(productName + variations[y].item_variation_data.name + sold_out_status);
 
                 //create label node
                 let label = document.createElement("label");
-                label.addEventListener('click', function(){
-                    highlightButton(this);
-                    
-                });
+ 
                 //set label text
                 label.innerText = variations[y].item_variation_data.name;
                 label.setAttribute("class", "button-label");
@@ -658,6 +668,20 @@ async function getCatalog(page)
                 label.appendChild(input);
                 //set variation id
                 input.setAttribute("value", variations[y].id);
+                if(sold_out_status)
+                {
+                    input.disabled = true;
+                    console.log(input.disabled);
+                    
+                }
+                else
+                {
+                    label.addEventListener('click', function(){
+                        
+                        highlightButton(this);
+                        
+                    });
+                }
             
                 buttonGroup.appendChild(label);
                 
@@ -680,7 +704,15 @@ async function getCatalog(page)
             document.getElementsByClassName("product-scroll")[0].appendChild(node);
         }
         
-        
+        const productScroll = document.getElementsByClassName("product-scroll")[0];
+
+        if (productScroll.hasChildNodes())
+        {
+            productScroll.removeChild(productScroll.children[0]);
+        }
+
+
+
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     }

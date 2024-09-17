@@ -14,48 +14,109 @@
   <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
   <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
   <style>
-    @media screen and (max-width: 1130px)
+   
+   
+    .pictureContainer img
     {
-    html{
-      font-size: 12px;
-    }
-    .product-scroll {
+      float: center;
+      width:50%;
+      text-align: center;
       
-      width:100%;
-      overflow-x: auto;
-      display:flex;
-     
-      align-items: center;
-    }
-    .product-item img {
-      max-width: 100%;
-      width: 100%;
-      height: auto;
-      border-radius: 5px;
     }
 
-    .product-item
+    .pictureContainer
     {
-      display: flex;
-      align-items: center;
+      width:50%;
+      justify-content: center;
+      
     }
     .product-details
     {
+      width:50%;
+      /* font-size: 30px; */
+      text-align: center;
       justify-content: center;
-      align-items: center;
-      display:inline-block;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .product-item{
+      
+      flex-direction: row;
+      width:80%;
+      columns: 50% 2;
+      justify-content: center;
+      margin-bottom: 4%;
     }
     .button-group
     {
-      display: flex;
-      float:right;
-      
+      text-align: center;
+      justify-content: center;
     }
-    .add-to-cart
+    @media screen and (max-width: 1130px)
     {
-      display: flex;
-      float:right;
-    }
+      html{
+        font-size: 12px;
+      }
+      .section
+      {
+        padding: 0%;
+      }
+      .product-scroll {
+        
+        width:100%;
+        overflow-x: auto;
+        display:flex;
+      
+        align-items: center;
+      }
+      .product-item img {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        
+      }
+
+      .product-item
+      {
+        display: flex;
+        align-items: center;
+        width:100%;
+        justify-content: center;
+        
+      }
+      .product-details
+      {
+        justify-content: center;
+        align-items: center;
+        /* display:inline-block; */
+        text-align:center;
+        width:40%;
+        /* float: right; */
+      }
+      .button-group
+      {
+        display: flex;
+        /* float:right; */
+        width:100%;
+        flex-wrap:wrap;
+
+        
+        
+      }
+      .video-section video
+      {
+        width: 100%;
+        height:auto;
+      }
+      .add-to-cart
+      {
+        /* display: flex; */
+        text-align: center;
+        
+      
+      }
+
+      
     }
     /* .pictureContainer
     {
@@ -68,7 +129,17 @@
 
 
 
-<!-- <script type="py" src="square-checkout.py" ></script> -->
+<script>
+  const height = window.screen.height;
+  const width = window.screen.width;
+
+  if (width <= 1131)
+  {
+    buttonGroup = document.getElementsByClassName(".button-group");
+    buttonGroup.remove();
+  }
+
+</script>
 
 <body>
 
@@ -114,7 +185,7 @@
    <!-- Video Section -->
   <section id="video-section">
     <video width="100%" height="400" autoplay muted loop>
-      <source src="Ceej - Ice Cream (Official Music Video).mp4" type="video/mp4">
+      <source src="shk_dvd.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </section>
