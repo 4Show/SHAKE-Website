@@ -89,6 +89,7 @@ body {
     background-color: #f8f4eb;
     color: #333;
     width: 100%;
+    touch-action: manipulation;
   }
   
   header {

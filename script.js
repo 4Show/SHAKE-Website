@@ -2,7 +2,8 @@ function toggleCart(cartNode, productId)
 {
 
     const selectedButton = document.querySelector('.button-label input[type="radio"]:checked');
-    if (selectedButton) 
+    console.log(selectedButton.parentElement.getAttribute("class"));
+    if (selectedButton && selectedButton.parentElement.classList.contains("active")== true)
     {
     
          // Get existing cart data from sessionStorage
@@ -423,10 +424,24 @@ function highlightButton(label)
 
 function soldOut(input)
 {
-    input.parentElement.classList.add("sold_out");
-    console.log(input.disabled);
-    input.disabled = true;
-    console.log(input.disabled);
+    
+    input.addEventListener("click", function() {
+        // Code to execute when the button is clicked
+        // Remove "active" class from all buttons in the same group
+        const buttons = input.parentElement.parentElement.querySelectorAll("label");
+        console.log(buttons.length);
+        
+        for (const button of buttons) {
+            button.classList.remove('active');
+            console.log(button);
+        }
+    });
+ 
+    
+    // input.disabled = true;
+    input.parentElement.style.backgroundColor = "lightgrey";
+    input.parentElement.setAttribute("title", "SOLD OUT");
+
     
 }
 
@@ -665,13 +680,14 @@ async function getCatalog(page)
                 input.setAttribute("type", "radio");
                 input.setAttribute("name", "group "+ i);
                 input.setAttribute("class", "button");
+                
                 label.appendChild(input);
                 //set variation id
                 input.setAttribute("value", variations[y].id);
                 if(sold_out_status)
                 {
-                    input.disabled = true;
-                    console.log(input.disabled);
+                    soldOut(input);
+                    
                     
                 }
                 else
