@@ -147,6 +147,8 @@ body {
 
   .video-section{
     margin-top: 20px;
+    width: 100%;
+    height: auto;
   }
   
   .submenu {
