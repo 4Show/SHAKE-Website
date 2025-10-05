@@ -1,3 +1,0 @@
-name = "Shake Website"
-description= "Adds the python packages to use for the shake website"
-packages = ["arrr","pandas"]

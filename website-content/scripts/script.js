@@ -98,8 +98,6 @@ function toggleCart(cartNode, productId)
 
 }
 
-
-
 function showCart()
 {
      //transitions the cart open
@@ -161,7 +159,7 @@ function loadCart()
 
                 //gets the image
                 let img = document.createElement("img");
-                img.setAttribute('src',cart[i].image);
+                img.setAttribute('src',"media/products/" + cart[i].image);
                 img.style.maxHeight = "auto";
                 img.style.maxWidth = "100%";
                 divContainer.appendChild(img);
@@ -312,8 +310,6 @@ function increaseQuantity(quantButton) {
 
 }
 
-
-
 function decreaseQuantity(quantButton) {
    
     var quantDiv = quantButton.parentElement;
@@ -366,8 +362,6 @@ function decreaseQuantity(quantButton) {
  
 }
 
-
-
 function updateCartCountDisplay() {
 
 
@@ -379,11 +373,10 @@ function updateCartCountDisplay() {
     }
 }
 
-
 //this function will take the user to the checkout page after clicking the cart icon
 function goToCartPage()
 {
-    window.location.href = 'Checkout-SHAKE.html';
+    window.location.href = 'website-content/HTML/Checkout-SHAKE.html';
 }
 
 // this function will take care of the actions associated with submitting the contact form
@@ -619,10 +612,10 @@ async function getCatalog(page)
             let image = document.createElement("img");
             if(homePageAttribute == true)
             {
-                image.setAttribute('src',imgIDs[0]);
+                image.setAttribute('src',"media/products/" + imgIDs[0]);
             }
             else{
-                image.setAttribute('src',imgIDs[0]);
+                image.setAttribute('src',"media/products/" + imgIDs[0]);
             }
             
             image.setAttribute("alt","Product" + i);
