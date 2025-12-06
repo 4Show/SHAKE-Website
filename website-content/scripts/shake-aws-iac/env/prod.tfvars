@@ -1,0 +1,9 @@
+bucket_name = "my-production-bucket"
+lambda_function_name = "my-production-lambda"
+api_gateway_name = "my-production-api"
+domain_name = "example.com"
+route53_zone_id = "Z123456789"
+lambda_memory_size = 128
+lambda_timeout = 30
+layer_name = "my-production-layer"
+s3_region = "us-west-2"

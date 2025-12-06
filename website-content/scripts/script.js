@@ -1,3 +1,8 @@
+
+
+//----------------------------------CART FUNCTIONALITY----------------------------------//
+
+//this function will add items to the cart when the add to cart button and a size is highlited is clicked
 function toggleCart(cartNode, productId) 
 {
 
@@ -97,14 +102,22 @@ function toggleCart(cartNode, productId)
     
 
 }
-
+//will open the scrollbar with the items the user has added to their cart
 function showCart()
 {
      //transitions the cart open
      transWin = document.querySelector(".cartTab");
      transWin.style.right = "0%";
 }
-
+//will close the cart back if open
+function closeCart()
+{
+    closeBtn = document.querySelector(".cartTab");
+    closeBtn.style.right = "-400px";
+    
+    updateCartCountDisplay();
+}
+//will loiad the scrollbar with the items from local storage that have been added to the users cart
 function loadCart()
 {
 
@@ -249,7 +262,7 @@ function loadCart()
     }
    
 }
-
+//will add to the running subtotal when the user is adding/subtracting things from the cart
 function updateSubtotal()
 {
    
@@ -270,6 +283,7 @@ function updateSubtotal()
     
         
 }
+//will increase the quantity of the cart and the item picked
 function increaseQuantity(quantButton) {
 
     var quantDiv = quantButton.parentElement;
@@ -309,7 +323,7 @@ function increaseQuantity(quantButton) {
     subtotalElement.innerText =  "Subtotal: $" + subtotal.toFixed(2);
 
 }
-
+//will decrease the quantity of the cart and the item picked
 function decreaseQuantity(quantButton) {
    
     var quantDiv = quantButton.parentElement;
@@ -361,7 +375,7 @@ function decreaseQuantity(quantButton) {
  
  
 }
-
+//will update the cart count anytime an item is added
 function updateCartCountDisplay() {
 
 
@@ -372,13 +386,18 @@ function updateCartCountDisplay() {
       cartCountElement.textContent = cartCount;
     }
 }
-
 //this function will take the user to the checkout page after clicking the cart icon
 function goToCartPage()
 {
     window.location.href = 'website-content/HTML/Checkout-SHAKE.html';
 }
+//----------------------------------CART FUNCTIONALITY----------------------------------//
 
+
+
+
+
+//----------------------------------PAGE FUNCTIONS----------------------------------//
 // this function will take care of the actions associated with submitting the contact form
 // on the contact page
 function submitContactForm() 
@@ -398,7 +417,6 @@ function submitContactForm()
     };
     xhr.send(formData);
 }  
-
 //when the button is clicked within the specific product item
 //I want the background color of the button to change to red
 //SELECTS THE correct size button for each product
@@ -414,7 +432,7 @@ function highlightButton(label)
     // Add "active" class to the clicked button
     label.classList.add('active');
 }
-
+//willl disable size button when an item is sold out 
 function soldOut(input)
 {
     
@@ -437,8 +455,6 @@ function soldOut(input)
 
     
 }
-
-
 function showSection(sectionId) 
 {
     // Hide all sections
@@ -450,14 +466,6 @@ function showSection(sectionId)
     // Show the clicked section
     var activeSection = document.getElementById(sectionId);
     activeSection.classList.add('active');
-}
-
-function closeCart()
-{
-    closeBtn = document.querySelector(".cartTab");
-    closeBtn.style.right = "-400px";
-    
-    updateCartCountDisplay();
 }
 
 async function callPaymentLink()
@@ -535,8 +543,9 @@ async function callPaymentLink()
 
 async function getCatalog(page)
 {
-    const awsEndpoint = "https://82nxujrefe.execute-api.us-east-1.amazonaws.com/getCatalog";
-    const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
+    const awsEndpoint = AWS_ENDPOINT;
+    const functionURL = FUNCTION_URL;
+    const awsToken = AWS_TOKEN
 
     try {
         const response = await fetch(functionURL, 
@@ -726,4 +735,4 @@ async function getCatalog(page)
         console.error('There was a problem with the fetch operation:', error);
     }
 }
-
+//----------------------------------PAGE FUNCTIONS----------------------------------//

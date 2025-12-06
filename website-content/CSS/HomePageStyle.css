@@ -5,42 +5,42 @@ html
 }
 @font-face{
   font-family : paladins;
-  src: url("fonts/paladins.ttf")
+  src: url("../../fonts/paladins.ttf")
 }
 
 @font-face{
   font-family : Butterfly;
-  src: url("fonts/Butterfly.otf")
+  src: url("../../fonts/Butterfly.otf")
 }
 
 @font-face{
   font-family : inked;
-  src: url("fonts/inked_God.ttf")
+  src: url("../../fonts/inked_God.ttf")
 }
 
 @font-face{
   font-family : White_on_black;
-  src: url("fonts/White_On_Black.ttf")
+  src: url("../../fonts/White_On_Black.ttf")
 }
 
 @font-face{
   font-family : Mangiola;
-  src: url("fonts/Mangiola-Regular.ttf")
+  src: url("../../fonts/Mangiola-Regular.ttf")
 }
 
 @font-face{
   font-family : steampips;
-  src: url("fonts/Steampips.otf")
+  src: url("../../fonts/Steampips.otf")
 }
 
 @font-face{
   font-family : Casino;
-  src: url("fonts/GrandCasino.otf")
+  src: url("../../fonts/GrandCasino.otf")
 }
 
 @font-face{
   font-family : psilograph;
-  src: url("fonts/psilograph/Psilograph-SemiBold.ttf")
+  src: url("../../fonts/psilograph/Psilograph-SemiBold.ttf")
 }
 
 @media screen and (max-width: 1130px)
