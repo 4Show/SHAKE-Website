@@ -1,0 +1,17 @@
+{
+  "name": "shake-website",
+  "version": "1.0.0",
+  "description": "This repository will manage the versions of the SHAKE website for easy deployment.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1624.0",
+    "nodemailer": "^6.9.13",
+    "square": "^36.0.0"
+  }
+}
