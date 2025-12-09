@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Navigate to the Terraform configuration directory
-cd ./shake-aws-iac
+cd ../
 
 # Initialize Terraform
 terraform init
