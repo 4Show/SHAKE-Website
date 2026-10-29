@@ -544,9 +544,7 @@ async function callPaymentLink()
 
 async function getCatalog(page)
 {
-    const awsEndpoint = AWS_ENDPOINT;
-    const functionURL = FUNCTION_URL;
-    const awsToken = AWS_TOKEN
+    const square_url = 
 
     try {
         const response = await fetch(functionURL, 
