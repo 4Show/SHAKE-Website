@@ -2,7 +2,7 @@
 
 //----------------------------------CART FUNCTIONALITY----------------------------------//
 
-//this function will add items to the cart when the add to cart button and a size is highlited is clicked
+// Adds the selected size of a product to the session cart and updates its count.
 function toggleCart(cartNode)
 {
     const productContainer = cartNode.closest(".product-item");
@@ -47,14 +47,14 @@ function toggleCart(cartNode)
     sessionStorage.setItem("cartIDs", JSON.stringify(cartIDs));
     updateCartCountDisplay();
 }
-//will open the scrollbar with the items the user has added to their cart
+// Opens the shopping-cart drawer.
 function showCart()
 {
      //transitions the cart open
      transWin = document.querySelector(".cartTab");
      transWin.style.right = "0%";
 }
-//will close the cart back if open
+// Closes the shopping-cart drawer and refreshes the displayed cart count.
 function closeCart()
 {
     closeBtn = document.querySelector(".cartTab");
@@ -62,7 +62,7 @@ function closeCart()
     
     updateCartCountDisplay();
 }
-//will loiad the scrollbar with the items from local storage that have been added to the users cart
+// Rebuilds the cart drawer from products saved in session storage.
 function loadCart()
 {
 
@@ -207,7 +207,7 @@ function loadCart()
     }
    
 }
-//will add to the running subtotal when the user is adding/subtracting things from the cart
+// Recalculates the cart subtotal from the saved product quantities.
 function updateSubtotal()
 {
    
@@ -228,7 +228,7 @@ function updateSubtotal()
     
         
 }
-//will increase the quantity of the cart and the item picked
+// Increases one cart item's quantity and updates the stored count and subtotal.
 function increaseQuantity(quantButton) {
 
     var quantDiv = quantButton.parentElement;
@@ -268,7 +268,7 @@ function increaseQuantity(quantButton) {
     subtotalElement.innerText =  "Subtotal: $" + subtotal.toFixed(2);
 
 }
-//will decrease the quantity of the cart and the item picked
+// Decreases a cart item's quantity, removing it when its quantity reaches zero.
 function decreaseQuantity(quantButton) {
    
     var quantDiv = quantButton.parentElement;
@@ -320,7 +320,7 @@ function decreaseQuantity(quantButton) {
  
  
 }
-//will update the cart count anytime an item is added
+// Displays the current cart quantity beside the cart icon.
 function updateCartCountDisplay() {
 
 
@@ -331,7 +331,7 @@ function updateCartCountDisplay() {
       cartCountElement.textContent = cartCount;
     }
 }
-//this function will take the user to the checkout page after clicking the cart icon
+// Navigates to the dedicated checkout page.
 function goToCartPage()
 {
     window.location.href = 'website-content/HTML/Checkout-SHAKE.html';
@@ -343,8 +343,7 @@ function goToCartPage()
 
 
 //----------------------------------PAGE FUNCTIONS----------------------------------//
-// this function will take care of the actions associated with submitting the contact form
-// on the contact page
+// Sends the contact form fields to the site's email handler.
 function submitContactForm() 
 {
 
@@ -362,9 +361,7 @@ function submitContactForm()
     };
     xhr.send(formData);
 }  
-//when the button is clicked within the specific product item
-//I want the background color of the button to change to red
-//SELECTS THE correct size button for each product
+// Marks the clicked size option as selected within its product's size group.
 function highlightButton(label) 
 {
     // Remove "active" class from all buttons in the same group
@@ -377,7 +374,7 @@ function highlightButton(label)
     // Add "active" class to the clicked button
     label.classList.add('active');
 }
-//willl disable size button when an item is sold out 
+// Marks a sold-out size option so it cannot be selected for purchase.
 function soldOut(input)
 {
     
@@ -400,6 +397,7 @@ function soldOut(input)
 
     
 }
+// Activates the requested page section and hides the other sections.
 function showSection(sectionId) 
 {
     // Hide all sections
@@ -413,82 +411,35 @@ function showSection(sectionId)
     activeSection.classList.add('active');
 }
 
-//----------------------------------API CALLS----------------------------------//
-async function callPaymentLink()
+//----------------------------------SITE SETUP LOAD----------------------------------//
+// Converts the session cart to Square line items and redirects to its payment link.
+async function redirectToCheckout()
 {
-
-    const awsEndpoint = "https://82nxujrefe.execute-api.us-east-1.amazonaws.com/createPaymentLink";
-    const functionURL = "https://b44ax3y3wncvazueob7tlu53iu0jjscm.lambda-url.us-east-1.on.aws/";
-    var params = new URLSearchParams();
-    var lineOrderItems = []
+    const lineOrderItems = [];
 
     // Get cart data from sessionStorage
-    let cart = JSON.parse(sessionStorage.getItem('cart'))||[];
+    const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
 
-    for(let i = 0; i< cart.length; i++)
-    {
-        var cartID = cart[i].cartId;
-        var quantity = cart[i].quantity;
-
-        
-        lineOrderItems[i] =  {
-            "quantity": String(quantity),
-            "catalog_object_id": cartID,
-            "item_type": "ITEM"
-            }
+    for (const item of cart) {
+        lineOrderItems.push({
+            quantity: String(item.quantity),
+            catalog_object_id: item.cartId,
+            item_type: "ITEM"
+        });
     }
-    
-    // window.alert(params);
-    // Use the parameters in a URL
-    // var urlWithParams = `${url}?${params.toString()}`;
-    // bodyContent = {
-    //     "lineOrderItems": lineOrderItems
-    // }
-
-    bodyContent = {
-        // "description": "SHK Apparel",
-        "line_items": lineOrderItems,
-        // "allow_tipping": False,
-        // "ask_for_shipping_address": True,
-        // "apple_pay": True,
-        // "google_pay": True,
-        // "cash_app_pay": True,
-        // "afterpay_clearpay": True,
-        // "enable_coupon": False,
-        // "enable_loyalty": False
-        
-}
 
     try {
-        const response = await fetch(functionURL, 
-        {
-            method: 'POST', // or 'GET', 'PUT', etc.
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bodyContent)
-            
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        
-        
-        let data = await response.text();
-        // console.log(data);
-        window.location.href  = data;
-
-
-        
+        const paymentLink = await window.shakeApiRequests.fetchSquarePaymentLink(lineOrderItems);
+        window.location.href = paymentLink;
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
+        console.error("There was a problem creating the payment link:", error);
     }
 }
 
 
 window.CatalogItem = window.CatalogItem || class CatalogItem
 {
+    // Copies the Square catalog fields needed to display one product.
     constructor(item, index)
     {
         this.id = item.id;
@@ -502,6 +453,7 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
         ]?.boolean_value;
     }
 
+    // Builds the product card, size choices, price, and add-to-cart button.
     render()
     {
         const node = document.createElement("div");
@@ -585,29 +537,11 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
     }
 }
 
-async function getCatalog(page)
+// Requests Square catalog items and renders the products for the current page.
+async function displayCatalogItems(page)
 {
     try {
-        if (typeof FUNCTION_URL === "undefined" || !FUNCTION_URL) {
-            throw new Error("FUNCTION_URL is not configured.");
-        }
-
-        const response = await fetch(FUNCTION_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`Catalog request failed: ${response.status} ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        const items = typeof data.items === "string" ? JSON.parse(data.items) : data.items;
-        if (!Array.isArray(items)) {
-            throw new Error("Catalog response does not contain an items array.");
-        }
+        const items = await window.shakeApiRequests.fetchSquareCatalogItems();
 
         const productScroll = document.querySelector(".product-scroll");
         if (!productScroll) {
@@ -628,4 +562,4 @@ async function getCatalog(page)
         console.error("There was a problem loading the catalog:", error);
     }
 }
-//----------------------------------END OF API CALLS----------------------------------//
+//----------------------------------END OF CATALOG DISPLAY----------------------------------//
