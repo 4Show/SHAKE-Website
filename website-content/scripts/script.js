@@ -3,104 +3,49 @@
 //----------------------------------CART FUNCTIONALITY----------------------------------//
 
 //this function will add items to the cart when the add to cart button and a size is highlited is clicked
-function toggleCart(cartNode, productId) 
+function toggleCart(cartNode)
 {
+    const productContainer = cartNode.closest(".product-item");
+    const selectedButton = productContainer?.querySelector(
+        '.button-label input[type="radio"]:checked'
+    );
 
-    const selectedButton = document.querySelector('.button-label input[type="radio"]:checked');
-    console.log(selectedButton.parentElement.getAttribute("class"));
-    if (selectedButton && selectedButton.parentElement.classList.contains("active")== true)
-    {
-    
-         // Get existing cart data from sessionStorage
-         let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
-         let cartCount = parseInt(sessionStorage.getItem('cartCount')) || 0;
-         let cartIDs = JSON.parse(sessionStorage.getItem('cartIDs')) || [];
-         
-        
-         let productContainer = cartNode.parentElement.parentElement
-         let radioButtonsLabel = productContainer.querySelector(".product-details").getElementsByClassName("button-group")[0].querySelectorAll("label");
-         let sizeSelected=false;
-
-         for (index = 0; index < radioButtonsLabel.length; index++) 
-         {
-            var radioButtons = radioButtonsLabel[index].querySelector("input");
-           
-           
-             if (radioButtons.checked) 
-             {
-                 // Get the label associated with the checked radio button
-                var sizeHold = radioButtonsLabel[index].innerText;
-                sizeSelected = true;
-                
-                var cartId = (radioButtonsLabel[index].querySelector("input").getAttribute("value"));
-
-                
-                
-             }
-         }
-         
-
-        // Extract product information from the container
-        let product = {
-            name: productContainer.querySelector(".product-details").querySelector("h3").innerHTML,
-            description: productContainer.querySelector(".product-details").querySelector("p").innerHTML,
-            price: productContainer.querySelector(".product-details").getElementsByClassName("price")[0].innerHTML,
-            size: sizeHold,
-            image: productContainer.querySelector("img").getAttribute("src"),
-            quantity:1,
-            cartId: cartId
-        };
-
-        
-
-     
-
-        if(!sizeSelected)
-        {
-            alert("Please select a size before adding to cart");
-        }
-        else{
-            var i=0;
-            while(i < cart.length)
-            {
-                if(cart[i].name == product.name && cart[i].size == product.size)
-                {
-                    var found = true;
-                    break;
-                }
-                i++;
-            }
-
-            if(found == true )
-            {
-                cart[i].quantity +=1;
-                sessionStorage.setItem(cart, JSON.stringify(cart));
-            }
-            else{
-                cart.push(product);
-                
-            }
-            cartIDs.push(cartId);
-            cartCount++;
-
-            // Update sessionStorage with the new cart data
-            sessionStorage.setItem('cart', JSON.stringify(cart));
-            sessionStorage.setItem('cartCount', cartCount);
-            sessionStorage.setItem('cartIDs', JSON.stringify(cartIDs));
-            
-            updateCartCountDisplay();
-            
-            
-        }
-        
-    }
-    else 
-    {
-        alert('Please select a product before adding to cart.');
+    if (!selectedButton || !selectedButton.parentElement.classList.contains("active")) {
+        alert("Please select a size before adding to cart.");
+        return;
     }
 
-    
+    const productDetails = productContainer.querySelector(".product-details");
+    const cartId = selectedButton.value;
+    const product = {
+        name: productDetails.querySelector("h3").textContent,
+        description: productDetails.querySelector(".description").textContent,
+        price: productDetails.querySelector(".price").textContent,
+        size: selectedButton.parentElement.innerText,
+        image: productContainer.querySelector("img").getAttribute("src"),
+        quantity: 1,
+        cartId
+    };
 
+    const cart = JSON.parse(sessionStorage.getItem("cart")) || [];
+    const cartIDs = JSON.parse(sessionStorage.getItem("cartIDs")) || [];
+    let cartCount = parseInt(sessionStorage.getItem("cartCount")) || 0;
+    const existingProduct = cart.find(
+        (item) => item.name === product.name && item.size === product.size
+    );
+
+    if (existingProduct) {
+        existingProduct.quantity += 1;
+    } else {
+        cart.push(product);
+    }
+
+    cartIDs.push(cartId);
+    cartCount += 1;
+    sessionStorage.setItem("cart", JSON.stringify(cart));
+    sessionStorage.setItem("cartCount", cartCount);
+    sessionStorage.setItem("cartIDs", JSON.stringify(cartIDs));
+    updateCartCountDisplay();
 }
 //will open the scrollbar with the items the user has added to their cart
 function showCart()
@@ -542,196 +487,145 @@ async function callPaymentLink()
 }
 
 
+window.CatalogItem = window.CatalogItem || class CatalogItem
+{
+    constructor(item, index)
+    {
+        this.id = item.id;
+        this.name = item.item_data.name;
+        this.description = item.item_data.description || "";
+        this.imageIds = item.item_data.image_ids || [];
+        this.variations = item.item_data.variations || [];
+        this.index = index;
+        this.isHomePageFeatured = item.custom_attribute_values?.[
+            "Square:fb0e53e7-5b0a-4856-99ad-02f7c99e0476"
+        ]?.boolean_value;
+    }
+
+    render()
+    {
+        const node = document.createElement("div");
+        node.dataset.productId = this.id;
+        node.className = "product-item";
+
+        const pictureContainer = document.createElement("div");
+        pictureContainer.className = "pictureContainer";
+
+        const image = document.createElement("img");
+        image.src = `media/products/${this.imageIds[0] || ""}`;
+        image.alt = this.name;
+        pictureContainer.append(image);
+        node.append(pictureContainer);
+
+        const productDetails = document.createElement("div");
+        productDetails.className = "product-details";
+        node.append(productDetails);
+
+        const heading = document.createElement("h3");
+        heading.textContent = this.name;
+        productDetails.append(heading);
+
+        const description = document.createElement("p");
+        description.className = "description";
+        description.textContent = this.description;
+        productDetails.append(description);
+
+        const price = document.createElement("p");
+        price.className = "price";
+        productDetails.append(price);
+
+        const buttonGroup = document.createElement("div");
+        buttonGroup.className = "button-group";
+
+        this.variations.forEach((variation) => {
+            const variationData = variation.item_variation_data;
+            const label = document.createElement("label");
+            label.className = "button-label";
+            label.append(document.createTextNode(variationData.name));
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = `group ${this.index}`;
+            input.className = "button";
+            input.value = variation.id;
+            label.append(input);
+
+            if (variationData.location_overrides?.[0]?.sold_out) {
+                soldOut(input);
+            } else {
+                label.addEventListener("click", function() {
+                    highlightButton(this);
+                });
+            }
+
+            buttonGroup.append(label);
+        });
+
+        const lastVariation = this.variations[this.variations.length - 1];
+        if (lastVariation) {
+            const amount = lastVariation.item_variation_data.price_money.amount;
+            price.textContent = (Number(amount) / 100).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD"
+            });
+        }
+
+        productDetails.append(buttonGroup);
+
+        const addToCart = document.createElement("button");
+        addToCart.className = "add-to-cart";
+        addToCart.textContent = "Add To Cart";
+        addToCart.addEventListener("click", function() {
+            toggleCart(this);
+            loadCart();
+        });
+        productDetails.append(addToCart);
+
+        return node;
+    }
+}
+
 async function getCatalog(page)
 {
-    const square_url = 
-
     try {
-        const response = await fetch(functionURL, 
-        {
-            method: 'GET', // or 'GET', 'PUT', etc.
+        if (typeof FUNCTION_URL === "undefined" || !FUNCTION_URL) {
+            throw new Error("FUNCTION_URL is not configured.");
+        }
+
+        const response = await fetch(FUNCTION_URL, {
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json'
-            },
-           
-            
+                "Content-Type": "application/json"
+            }
         });
 
         if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        
-        //loop through the result and get all the items
-        let data = JSON.parse(await response.text());
-        let dataLength = JSON.parse(data.items).length
-        console.log(JSON.parse(data.items));
-        
-        
-        
-
-        //loop through catalog items
-        for(i=0; i< dataLength ; i++)
-        {
-         
-            let productName = JSON.parse(data.items)[i].item_data.name;
-            let productID = JSON.parse(data.items)[i].id;
-            let description = JSON.parse(data.items)[i].item_data.description;
-            let imgIDs = JSON.parse(data.items)[i].item_data.image_ids;
-            let variations = JSON.parse(data.items)[i].item_data.variations;
-            let homePageAttribute;
-            let check;
-
-           
-            
-            //try to see if custom attributes are present 
-            try {
-                homePageAttribute = JSON.parse(data.items)[i].custom_attribute_values['Square:fb0e53e7-5b0a-4856-99ad-02f7c99e0476'].boolean_value;
-
-                //check if the home page attribute is present
-                if(page == "HOME" && homePageAttribute ==  false)
-                {
-                    check = homePageAttribute;
-                    continue;
-                }
-             
-
-                
-            } catch (error) {
-                console.log("no custom attributes present");
-            }              
-        
-             
-            let price;
-            let sold_out_status;
-          
-            //create div item node
-            var node = document.createElement("div");
-            // set up the div product-item
-            node.setAttribute("data-product-id",productID);
-            //set up the class name
-            node.setAttribute("class","product-item");
-
-
-            //set up img element
-            let pictureContainer = document.createElement("div");
-            pictureContainer.height = "100%";
-            pictureContainer.width = "100%";
-            pictureContainer.setAttribute("Class","pictureContainer");
-            let image = document.createElement("img");
-            if(homePageAttribute == true)
-            {
-                image.setAttribute('src',"media/products/" + imgIDs[0]);
-            }
-            else{
-                image.setAttribute('src',"media/products/" + imgIDs[0]);
-            }
-            
-            image.setAttribute("alt","Product" + i);
-            // image.addEventListener('click', function(){
-            //     getImageName(imgIDs);
-                
-            // });
-            pictureContainer.append(image);
-            node.append(pictureContainer);
-
-            //set the product-details div class
-            let product_details = document.createElement("div")
-            product_details.setAttribute("class", "product-details");
-            node.append(product_details);
-
-            //product Name
-            let h3 = document.createElement("h3");
-            h3.innerText = productName;
-            product_details.append(h3);
-
-            //description
-            let descriptionPara = document.createElement("p");
-            descriptionPara.setAttribute("class","description");
-            descriptionPara.innerText = description;
-            product_details.append(descriptionPara);
-
-            //price
-            let pricePara = document.createElement("p");
-            pricePara.setAttribute("class","price");
-            product_details.append(pricePara);
-
-            //set button group attributes
-            let buttonGroup = document.createElement("div");
-            buttonGroup.setAttribute("class","button-group");
-     
-            
-            //loops through the variations of the item
-            for(y=0;y < variations.length; y++)
-            {
-                //set price for the product
-                price = JSON.parse(variations[y].item_variation_data.price_money.amount);
-                sold_out_status = variations[y].item_variation_data.location_overrides[0].sold_out;
-                // console.log(productName + variations[y].item_variation_data.name + sold_out_status);
-
-                //create label node
-                let label = document.createElement("label");
- 
-                //set label text
-                label.innerText = variations[y].item_variation_data.name;
-                label.setAttribute("class", "button-label");
-
-                
-                //create input node
-                let input = document.createElement("input");
-                input.setAttribute("type", "radio");
-                input.setAttribute("name", "group "+ i);
-                input.setAttribute("class", "button");
-                
-                label.appendChild(input);
-                //set variation id
-                input.setAttribute("value", variations[y].id);
-                if(sold_out_status)
-                {
-                    soldOut(input);
-                    
-                    
-                }
-                else
-                {
-                    label.addEventListener('click', function(){
-                        
-                        highlightButton(this);
-                        
-                    });
-                }
-            
-                buttonGroup.appendChild(label);
-                
-            }
-
-            pricePara.innerText = (price/100).toLocaleString("en-US", {style:"currency", currency:"USD"});
-            product_details.append(buttonGroup);
-
-            //create add to cart button
-            let addToCart = document.createElement("button");
-            addToCart.addEventListener('click', function(){
-                toggleCart(this, i);
-                loadCart();
-                
-            });
-            addToCart.setAttribute("class","add-to-cart")
-            addToCart.innerText = "Add To Cart";
-           
-            product_details.appendChild(addToCart);
-            document.getElementsByClassName("product-scroll")[0].appendChild(node);
-        }
-        
-        const productScroll = document.getElementsByClassName("product-scroll")[0];
-
-        if (productScroll.hasChildNodes())
-        {
-            productScroll.removeChild(productScroll.children[0]);
+            throw new Error(`Catalog request failed: ${response.status} ${response.statusText}`);
         }
 
+        const data = await response.json();
+        const items = typeof data.items === "string" ? JSON.parse(data.items) : data.items;
+        if (!Array.isArray(items)) {
+            throw new Error("Catalog response does not contain an items array.");
+        }
 
+        const productScroll = document.querySelector(".product-scroll");
+        if (!productScroll) {
+            throw new Error("Could not find the product catalog container.");
+        }
 
+        productScroll.querySelectorAll(".product-item").forEach((item) => item.remove());
+
+        items.forEach((item, index) => {
+            const catalogItem = new window.CatalogItem(item, index);
+            if (page === "HOME" && catalogItem.isHomePageFeatured === false) {
+                return;
+            }
+
+            productScroll.append(catalogItem.render());
+        });
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
+        console.error("There was a problem loading the catalog:", error);
     }
 }
 //----------------------------------END OF API CALLS----------------------------------//
