@@ -391,7 +391,7 @@ function goToCartPage()
 {
     window.location.href = 'website-content/HTML/Checkout-SHAKE.html';
 }
-//----------------------------------CART FUNCTIONALITY----------------------------------//
+//----------------------------------END OF CART FUNCTIONALITY----------------------------------//
 
 
 
@@ -468,6 +468,7 @@ function showSection(sectionId)
     activeSection.classList.add('active');
 }
 
+//----------------------------------API CALLS----------------------------------//
 async function callPaymentLink()
 {
 
@@ -735,4 +736,4 @@ async function getCatalog(page)
         console.error('There was a problem with the fetch operation:', error);
     }
 }
-//----------------------------------PAGE FUNCTIONS----------------------------------//
+//----------------------------------END OF API CALLS----------------------------------//
