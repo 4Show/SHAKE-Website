@@ -6,6 +6,13 @@
 function toggleCart(cartNode)
 {
     const productContainer = cartNode.closest(".product-item");
+    const colorSelect = productContainer?.querySelector(".color-select");
+    if (colorSelect && !colorSelect.value) {
+        alert("Please select a color before adding to cart.");
+        colorSelect.focus();
+        return;
+    }
+
     const selectedButton = productContainer?.querySelector(
         '.button-label input[type="radio"]:checked'
     );
@@ -22,7 +29,7 @@ function toggleCart(cartNode)
         description: productDetails.querySelector(".description").textContent,
         price: productDetails.querySelector(".price").textContent,
         size: selectedButton.parentElement.innerText,
-        color: productDetails.querySelector(".selected-color-value")?.textContent || "",
+        color: colorSelect?.value || "",
         image: productContainer.querySelector("img").getAttribute("src"),
         quantity: 1,
         cartId
@@ -32,7 +39,9 @@ function toggleCart(cartNode)
     const cartIDs = JSON.parse(sessionStorage.getItem("cartIDs")) || [];
     let cartCount = parseInt(sessionStorage.getItem("cartCount")) || 0;
     const existingProduct = cart.find(
-        (item) => item.name === product.name && item.size === product.size
+        (item) => item.name === product.name
+            && item.size === product.size
+            && item.color === product.color
     );
 
     if (existingProduct) {
@@ -82,12 +91,6 @@ function loadCart()
     }
     var subtotal = 0;
 
-
-    if (cart.length == 0) 
-    {
-       window.alert("Cart Empty")
-    } 
-    
 
     for(i =0; i < cart.length  ; i++)
     {
@@ -398,8 +401,7 @@ function soldOut(input)
     });
  
     
-    // input.disabled = true;
-    input.parentElement.style.backgroundColor = "lightgrey";
+    input.parentElement.classList.add("sold_out");
     input.parentElement.setAttribute("title", "SOLD OUT");
 
     
@@ -472,7 +474,7 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
         this.colors = [...new Set(
             [...this.colorByVariationId.values()].filter(Boolean)
         )];
-        this.selectedColor = this.colors[0] || "";
+        this.selectedColor = "";
         this.imageIdByColor = this.getImageIdsByColor(item.item_data.image_ids || []);
         this.isHomePageFeatured = item.custom_attribute_values?.[
             "Square:fb0e53e7-5b0a-4856-99ad-02f7c99e0476"
@@ -520,9 +522,9 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
     getImageUrl(variation)
     {
         const variationImageId = variation?.item_variation_data.image_ids?.[0];
-        const imageId = variationImageId
-            || this.imageIdByColor.get(this.selectedColor)
-            || this.imageIds[0];
+        const imageId = this.selectedColor
+            ? variationImageId || this.imageIdByColor.get(this.selectedColor) || this.imageIds[0]
+            : this.imageIds[0] || variationImageId;
         const image = this.images[imageId];
         return typeof image === "string" ? image : image?.url || "";
     }
@@ -542,21 +544,6 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
         const currentUrl = this.getImageUrl(variation);
 
         return [...new Set([currentUrl, ...urls].filter(Boolean))];
-    }
-
-    getAllImageUrls()
-    {
-        const imageIds = new Set([
-            ...this.imageIds,
-            ...this.variations.flatMap(
-                (variation) => variation.item_variation_data.image_ids || []
-            )
-        ]);
-
-        return [...imageIds]
-            .map((imageId) => this.images[imageId])
-            .map((image) => typeof image === "string" ? image : image?.url || "")
-            .filter(Boolean);
     }
 
     getImageIdsByColor(productImageIds)
@@ -585,8 +572,9 @@ cata            });
 
     getVisibleVariations()
     {
+        const color = this.selectedColor || this.colors[0];
         return this.variations.filter((variation) => (
-            !this.selectedColor || this.colorByVariationId.get(variation.id) === this.selectedColor
+            !color || this.colorByVariationId.get(variation.id) === color
         ));
     }
 
@@ -684,15 +672,6 @@ cata            });
         nextImage.addEventListener("click", () => showAdjacentImage(1));
         updateGallery();
         node.append(pictureContainer);
-        if (isShopPage) {
-            Promise.all(this.getAllImageUrls().map(getProductImageAspectRatio)).then((ratios) => {
-                const largestAspectRatio = Math.max(0, ...ratios);
-                if (largestAspectRatio > 0) {
-                    node.dataset.maxImageAspectRatio = String(largestAspectRatio);
-                    alignProductImageRows();
-                }
-            });
-        }
 
         const productDetails = document.createElement("div");
         productDetails.className = "product-details";
@@ -722,13 +701,19 @@ cata            });
             const colorSelect = document.createElement("select");
             colorSelect.className = "color-select";
             colorSelect.setAttribute("aria-label", `Color for ${this.name}`);
+            colorSelect.required = true;
+            const colorPlaceholder = document.createElement("option");
+            colorPlaceholder.value = "";
+            colorPlaceholder.textContent = "Choose a color";
+            colorPlaceholder.disabled = true;
+            colorPlaceholder.selected = true;
+            colorSelect.append(colorPlaceholder);
             this.colors.forEach((color) => {
                 const option = document.createElement("option");
                 option.value = color;
                 option.textContent = color;
                 colorSelect.append(option);
             });
-            colorSelect.value = this.selectedColor;
             colorSelect.addEventListener("change", () => {
                 this.selectedColor = colorSelect.value;
                 updateGallery();
@@ -756,27 +741,6 @@ cata            });
 
         return node;
     }
-}
-
-window.shakeProductImageAspectRatioCache = window.shakeProductImageAspectRatioCache || new Map();
-
-function getProductImageAspectRatio(url)
-{
-    if (!window.shakeProductImageAspectRatioCache.has(url)) {
-        window.shakeProductImageAspectRatioCache.set(url, new Promise((resolve) => {
-            const image = new Image();
-            image.addEventListener("load", () => {
-                resolve(image.naturalWidth ? image.naturalHeight / image.naturalWidth : 0);
-            }, { once: true });
-            image.addEventListener("error", () => {
-                console.error("Could not load a product image for gallery sizing:", url);
-                resolve(0);
-            }, { once: true });
-            image.src = url;
-        }));
-    }
-
-    return window.shakeProductImageAspectRatioCache.get(url);
 }
 
 // Requests Square catalog items and renders the products for the current page.
@@ -828,7 +792,7 @@ async function displayCatalogItems(page)
     }
 }
 
-// Gives each grid row a shared image area based on each card's tallest gallery image.
+// Gives each grid row a shared image area based on its currently displayed images.
 function alignProductImageRows()
 {
     const productScroll = document.querySelector(".product-scroll");
@@ -858,15 +822,11 @@ function alignProductImageRows()
                 return 0;
             }
 
-            const galleryAspectRatio = Number(card.dataset.maxImageAspectRatio);
-            const currentImageAspectRatio = image.naturalWidth
-                ? image.naturalHeight / image.naturalWidth
-                : 0;
-            const aspectRatio = galleryAspectRatio > 0
-                ? galleryAspectRatio
-                : currentImageAspectRatio;
+            if (!image.naturalWidth || !image.naturalHeight) {
+                return 0;
+            }
 
-            return frame.clientWidth * aspectRatio;
+            return frame.clientWidth * image.naturalHeight / image.naturalWidth;
         }));
 
         row.forEach((card) => {

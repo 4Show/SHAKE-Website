@@ -43,8 +43,8 @@
     }
 
     .pictureContainer > img {
-        width: auto;
-        height: auto;
+        width: 100%;
+        height: 100%;
         max-width: 100%;
         max-height: 100%;
         border-radius: 5px;
@@ -80,9 +80,14 @@
         background-color: #e84946;
         color: #fff;
         padding: 5px 10px;
-        border: none;
+        border: 1px solid transparent;
+        border-radius: 5px;
         cursor: pointer;
         margin-top: 10px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-weight: 650;
+        letter-spacing: .025em;
+        transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
     }
 
     .button-group {
@@ -102,8 +107,8 @@
           }
           .pictureContainer > img {
             max-width: 100%;
-            width: auto;
-            height: auto;
+            width: 100%;
+            height: 100%;
             border-radius: 5px;
             object-fit: contain;
           }
@@ -140,7 +145,10 @@
     <header>
         <div>
           <img src="../../media/logos/SHK-Logo.png" alt="SHK Logo">
-          <div class="cart-icon" onclick="loadCart(); showCart();">🛒 <span id="cartCount" >0</span></div>
+          <button type="button" class="cart-icon" onclick="loadCart(); showCart();" aria-label="Open shopping cart">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.1 10.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"></path><circle cx="10" cy="20" r="1.2"></circle><circle cx="18" cy="20" r="1.2"></circle></svg>
+            <span id="cartCount">0</span>
+          </button>
               <script>
                 // Update cart count when the page is loaded
               document.addEventListener('DOMContentLoaded', function() {
@@ -152,10 +160,10 @@
         
       </header>
 
-      <nav>
+      <nav aria-label="Main navigation">
         <ul>
           <li><a href="../HTML/Home-SHAKE.html">Home</a></li>
-          <li><a href="../HTML/Shop-SHAKE.html">Shop</a>
+          <li><a href="../HTML/Shop-SHAKE.html" aria-current="page">Shop</a>
             <ul class="submenu">
               <li><a href="#">Men</a></li>
               <li><a href="#">Women</a></li>

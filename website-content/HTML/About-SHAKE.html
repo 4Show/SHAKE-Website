@@ -22,7 +22,10 @@
   <header>
     <div>
       <img src="../../media/logos/SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="loadCart(); showCart();">🛒 <span id="cartCount">0</span></div>
+      <button type="button" class="cart-icon" onclick="loadCart(); showCart();" aria-label="Open shopping cart">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.1 10.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"></path><circle cx="10" cy="20" r="1.2"></circle><circle cx="18" cy="20" r="1.2"></circle></svg>
+        <span id="cartCount">0</span>
+      </button>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
     <script>
@@ -31,7 +34,7 @@
     </script>
   </header>
 
-  <nav>
+  <nav aria-label="Main navigation">
     <ul>
       <li><a href="../HTML/Home-SHAKE.html">Home</a></li>
       <li><a href="../HTML/Shop-SHAKE.html">Shop</a>
@@ -40,7 +43,7 @@
           <li><a href="#">Women</a></li>
         </ul>
       </li>
-      <li><a href="../HTML/About-SHAKE.html">About Us</a></li>
+      <li><a href="../HTML/About-SHAKE.html" aria-current="page">About Us</a></li>
       <li><a href="../HTML/Contact-SHAKE.html">Contact</a></li>
     </ul>
   </nav>
