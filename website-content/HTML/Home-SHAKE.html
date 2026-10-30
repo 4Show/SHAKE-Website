@@ -19,30 +19,33 @@
    
     .pictureContainer img
     {
-      float: center;
       width:50%;
-      text-align: center;
+      height:auto;
       
     }
 
     .pictureContainer
     {
+      display:flex;
       width:50%;
+      align-items:center;
       justify-content: center;
       
     }
     .product-details
     {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
       width:50%;
       /* font-size: 30px; */
       text-align: center;
       justify-content: center;
-      vertical-align: middle;
-      display: inline-block;
     }
     .product-item{
-      
-      flex-direction: row;
+      display:flex;
+      align-items:center;
+      flex-direction:row;
       width:80%;
       columns: 50% 2;
       justify-content: center;
@@ -261,8 +264,8 @@
         
       </footer>
       <script src="../scripts/script.js"></script>
-
-     
+      <script src="../scripts/site-footer.js"></script>
+      <script src="../scripts/newsletter.js"></script>
 
       
 </body>   

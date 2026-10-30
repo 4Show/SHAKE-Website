@@ -133,11 +133,13 @@ try {
     $method = $_SERVER['REQUEST_METHOD'] ?? '';
 
     if ($action === 'catalog' && $method === 'GET') {
-        $objects = [];
+        $items = [];
+        $images = [];
+        $itemOptions = [];
         $cursor = null;
 
         do {
-            $query = ['types' => 'ITEM'];
+            $query = ['types' => 'ITEM,IMAGE,ITEM_OPTION'];
             if ($cursor !== null) {
                 $query['cursor'] = $cursor;
             }
@@ -153,11 +155,26 @@ try {
             }
 
             $page = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
-            $objects = array_merge($objects, $page['objects'] ?? []);
+            foreach ($page['objects'] ?? [] as $object) {
+                if ($object['type'] === 'ITEM') {
+                    $items[] = $object;
+                } elseif ($object['type'] === 'IMAGE' && isset($object['image_data']['url'])) {
+                    $images[$object['id']] = [
+                        'url' => $object['image_data']['url'],
+                        'name' => $object['image_data']['name'] ?? '',
+                    ];
+                } elseif ($object['type'] === 'ITEM_OPTION') {
+                    $itemOptions[$object['id']] = $object['item_option_data'];
+                }
+            }
             $cursor = $page['cursor'] ?? null;
         } while ($cursor !== null);
 
-        echo json_encode(['items' => $objects], JSON_THROW_ON_ERROR);
+        echo json_encode([
+            'items' => $items,
+            'images' => $images,
+            'item_options' => $itemOptions,
+        ], JSON_THROW_ON_ERROR);
     } elseif ($action === 'payment-link' && $method === 'POST') {
         $requestBody = file_get_contents('php://input');
         if ($requestBody === false) {

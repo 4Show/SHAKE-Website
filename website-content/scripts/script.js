@@ -22,6 +22,7 @@ function toggleCart(cartNode)
         description: productDetails.querySelector(".description").textContent,
         price: productDetails.querySelector(".price").textContent,
         size: selectedButton.parentElement.innerText,
+        color: productDetails.querySelector(".selected-color-value")?.textContent || "",
         image: productContainer.querySelector("img").getAttribute("src"),
         quantity: 1,
         cartId
@@ -117,10 +118,7 @@ function loadCart()
 
                 //gets the image
                 let img = document.createElement("img");
-                const cartImage = cart[i].image.startsWith("media/products/")
-                    ? `../${cart[i].image}`
-                    : cart[i].image;
-                img.setAttribute("src", cartImage);
+                img.setAttribute("src", cart[i].image);
                 img.style.maxHeight = "auto";
                 img.style.maxWidth = "100%";
                 divContainer.appendChild(img);
@@ -187,6 +185,12 @@ function loadCart()
                 let parb = document.createElement("p");
                 parb.innerText= "Size: " + cart[i].size; 
                 descDiv.appendChild(parb);
+
+                if (cart[i].color) {
+                    const color = document.createElement("p");
+                    color.innerText = "Color: " + cart[i].color;
+                    descDiv.appendChild(color);
+                }
 
                 // gets the price
                 let par = document.createElement("p");
@@ -443,7 +447,7 @@ async function redirectToCheckout()
 window.CatalogItem = window.CatalogItem || class CatalogItem
 {
     // Copies the Square catalog fields needed to display one product.
-    constructor(item, index)
+    constructor(item, index, images, itemOptions)
     {
         this.id = item.id;
         this.name = item.item_data.name;
@@ -451,9 +455,178 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
         this.imageIds = item.item_data.image_ids || [];
         this.variations = item.item_data.variations || [];
         this.index = index;
+        this.images = images;
+        this.itemOptions = itemOptions;
+        const productOptionIds = (item.item_data.item_options || []).map(
+            (option) => option.item_option_id
+        );
+        this.colorOptionId = productOptionIds.find(
+            (id) => this.itemOptions[id] && this.isColorOption(this.itemOptions[id])
+        );
+        this.colorByVariationId = new Map(
+            this.variations.map((variation) => [
+                variation.id,
+                this.getOptionValue(variation, this.colorOptionId)
+            ])
+        );
+        this.colors = [...new Set(
+            [...this.colorByVariationId.values()].filter(Boolean)
+        )];
+        this.selectedColor = this.colors[0] || "";
+        this.imageIdByColor = this.getImageIdsByColor(item.item_data.image_ids || []);
         this.isHomePageFeatured = item.custom_attribute_values?.[
             "Square:fb0e53e7-5b0a-4856-99ad-02f7c99e0476"
         ]?.boolean_value;
+        this.createdAt = item.created_at || "";
+        this.minimumPrice = Math.min(...this.variations.map(
+            (variation) => Number(variation.item_variation_data.price_money?.amount || 0)
+        ));
+    }
+
+    getOptionValue(variation, optionId)
+    {
+        const optionValue = variation.item_variation_data.item_option_values?.find(
+            (value) => value.item_option_id === optionId
+        );
+        const option = this.itemOptions[optionId];
+        const value = option?.values?.find(
+            (candidate) => candidate.id === optionValue?.item_option_value_id
+        );
+        return value?.item_option_value_data?.name || value?.name || "";
+    }
+
+    isColorOption(option)
+    {
+        if (/\bcolou?rs?\b/i.test(option.name || "")) {
+            return true;
+        }
+
+        const values = (option.values || []).map(
+            (value) => value.item_option_value_data?.name || value.name || ""
+        );
+        const colorPattern = /\b(black|white|blue|red|green|purple|orange|pink|brown|yellow|olive|gray|grey|beige|tan|cream|navy|burgundy|teal|maroon|silver|gold)\b/i;
+        return values.length > 1 && values.every((value) => colorPattern.test(value));
+    }
+
+    getVariationLabel(variation)
+    {
+        const sizeOption = variation.item_variation_data.item_option_values?.find(
+            (value) => value.item_option_id !== this.colorOptionId
+        );
+        return this.getOptionValue(variation, sizeOption?.item_option_id)
+            || variation.item_variation_data.name;
+    }
+
+    getImageUrl(variation)
+    {
+        const variationImageId = variation?.item_variation_data.image_ids?.[0];
+        const imageId = variationImageId
+            || this.imageIdByColor.get(this.selectedColor)
+            || this.imageIds[0];
+        const image = this.images[imageId];
+        return typeof image === "string" ? image : image?.url || "";
+    }
+
+    getGalleryImageUrls(variation)
+    {
+        const colorImages = this.selectedColor
+            ? this.imageIds.filter((imageId) => (
+                this.images[imageId]?.name?.toLowerCase().includes(this.selectedColor.toLowerCase())
+            ))
+            : [];
+        const imageIds = colorImages.length ? colorImages : this.imageIds;
+        const urls = imageIds
+            .map((imageId) => this.images[imageId])
+            .map((image) => typeof image === "string" ? image : image?.url || "")
+            .filter(Boolean);
+        const currentUrl = this.getImageUrl(variation);
+
+        return [...new Set([currentUrl, ...urls].filter(Boolean))];
+    }
+
+    getAllImageUrls()
+    {
+        const imageIds = new Set([
+            ...this.imageIds,
+            ...this.variations.flatMap(
+                (variation) => variation.item_variation_data.image_ids || []
+            )
+        ]);
+
+        return [...imageIds]
+            .map((imageId) => this.images[imageId])
+            .map((image) => typeof image === "string" ? image : image?.url || "")
+            .filter(Boolean);
+    }
+
+    getImageIdsByColor(productImageIds)
+    {
+        const imageIdsByColor = new Map();
+        if (this.colors.length < 2) {
+            return imageIdsByColor;
+        }
+
+        this.colors.forEach((color, index) => {
+            const matchingImageId = productImageIds.find((imageId) => {
+                const imageName = this.images[imageId]?.name?.toLowerCase() || "";
+                return imageName.includes(color.toLowerCase());
+cata            });
+            const orderedImageId = productImageIds.length === this.colors.length
+                ? productImageIds[index]
+                : undefined;
+            const imageId = matchingImageId || orderedImageId;
+            if (imageId) {
+                imageIdsByColor.set(color, imageId);
+            }
+        });
+
+        return imageIdsByColor;
+    }
+
+    getVisibleVariations()
+    {
+        return this.variations.filter((variation) => (
+            !this.selectedColor || this.colorByVariationId.get(variation.id) === this.selectedColor
+        ));
+    }
+
+    renderVariations(buttonGroup, price)
+    {
+        buttonGroup.replaceChildren();
+        const visibleVariations = this.getVisibleVariations();
+
+        visibleVariations.forEach((variation) => {
+            const variationData = variation.item_variation_data;
+            const label = document.createElement("label");
+            label.className = "button-label";
+            label.append(document.createTextNode(this.getVariationLabel(variation)));
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = `group ${this.id}`;
+            input.className = "button";
+            input.value = variation.id;
+            label.append(input);
+
+            if (variationData.location_overrides?.[0]?.sold_out) {
+                soldOut(input);
+            } else {
+                label.addEventListener("click", function() {
+                    highlightButton(this);
+                });
+            }
+
+            buttonGroup.append(label);
+        });
+
+        const priceVariation = visibleVariations[0];
+        if (priceVariation) {
+            const amount = priceVariation.item_variation_data.price_money.amount;
+            price.textContent = (Number(amount) / 100).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD"
+            });
+        }
     }
 
     // Builds the product card, size choices, price, and add-to-cart button.
@@ -461,16 +634,65 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
     {
         const node = document.createElement("div");
         node.dataset.productId = this.id;
+        node.dataset.price = String(this.minimumPrice);
+        node.dataset.createdAt = this.createdAt;
+        node.dataset.catalogOrder = String(this.index);
         node.className = "product-item";
 
         const pictureContainer = document.createElement("div");
         pictureContainer.className = "pictureContainer";
 
         const image = document.createElement("img");
-        image.src = `../media/products/${this.imageIds[0] || ""}`;
         image.alt = this.name;
+        const productScroll = document.querySelector(".product-scroll");
+        const isShopPage = productScroll?.dataset.catalogPage === "SHOP";
+        if (isShopPage) {
+            image.addEventListener("load", alignProductImageRows);
+        }
         pictureContainer.append(image);
+
+        const previousImage = document.createElement("button");
+        previousImage.type = "button";
+        previousImage.className = "product-image-arrow product-image-previous";
+        previousImage.setAttribute("aria-label", `Previous image of ${this.name}`);
+        previousImage.textContent = "‹";
+        pictureContainer.append(previousImage);
+
+        const nextImage = document.createElement("button");
+        nextImage.type = "button";
+        nextImage.className = "product-image-arrow product-image-next";
+        nextImage.setAttribute("aria-label", `Next image of ${this.name}`);
+        nextImage.textContent = "›";
+        pictureContainer.append(nextImage);
+
+        let galleryImageUrls = [];
+        let currentImageIndex = 0;
+        const updateGallery = () => {
+            galleryImageUrls = this.getGalleryImageUrls(this.getVisibleVariations()[0]);
+            currentImageIndex = 0;
+            image.src = galleryImageUrls[currentImageIndex] || "";
+            previousImage.hidden = galleryImageUrls.length < 2;
+            nextImage.hidden = galleryImageUrls.length < 2;
+        };
+        const showAdjacentImage = (direction) => {
+            currentImageIndex = (
+                currentImageIndex + direction + galleryImageUrls.length
+            ) % galleryImageUrls.length;
+            image.src = galleryImageUrls[currentImageIndex];
+        };
+        previousImage.addEventListener("click", () => showAdjacentImage(-1));
+        nextImage.addEventListener("click", () => showAdjacentImage(1));
+        updateGallery();
         node.append(pictureContainer);
+        if (isShopPage) {
+            Promise.all(this.getAllImageUrls().map(getProductImageAspectRatio)).then((ratios) => {
+                const largestAspectRatio = Math.max(0, ...ratios);
+                if (largestAspectRatio > 0) {
+                    node.dataset.maxImageAspectRatio = String(largestAspectRatio);
+                    alignProductImageRows();
+                }
+            });
+        }
 
         const productDetails = document.createElement("div");
         productDetails.className = "product-details";
@@ -489,41 +711,37 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
         price.className = "price";
         productDetails.append(price);
 
+        if (this.colors.length > 0) {
+            const colorSelection = document.createElement("div");
+            colorSelection.className = "color-selection";
+
+            const colorLabel = document.createElement("span");
+            colorLabel.textContent = "Color:";
+            colorSelection.append(colorLabel);
+
+            const colorSelect = document.createElement("select");
+            colorSelect.className = "color-select";
+            colorSelect.setAttribute("aria-label", `Color for ${this.name}`);
+            this.colors.forEach((color) => {
+                const option = document.createElement("option");
+                option.value = color;
+                option.textContent = color;
+                colorSelect.append(option);
+            });
+            colorSelect.value = this.selectedColor;
+            colorSelect.addEventListener("change", () => {
+                this.selectedColor = colorSelect.value;
+                updateGallery();
+                this.renderVariations(buttonGroup, price);
+            });
+            colorSelection.append(colorSelect);
+            productDetails.append(colorSelection);
+        }
+
         const buttonGroup = document.createElement("div");
         buttonGroup.className = "button-group";
 
-        this.variations.forEach((variation) => {
-            const variationData = variation.item_variation_data;
-            const label = document.createElement("label");
-            label.className = "button-label";
-            label.append(document.createTextNode(variationData.name));
-
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = `group ${this.index}`;
-            input.className = "button";
-            input.value = variation.id;
-            label.append(input);
-
-            if (variationData.location_overrides?.[0]?.sold_out) {
-                soldOut(input);
-            } else {
-                label.addEventListener("click", function() {
-                    highlightButton(this);
-                });
-            }
-
-            buttonGroup.append(label);
-        });
-
-        const lastVariation = this.variations[this.variations.length - 1];
-        if (lastVariation) {
-            const amount = lastVariation.item_variation_data.price_money.amount;
-            price.textContent = (Number(amount) / 100).toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD"
-            });
-        }
+        this.renderVariations(buttonGroup, price);
 
         productDetails.append(buttonGroup);
 
@@ -540,22 +758,49 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
     }
 }
 
+window.shakeProductImageAspectRatioCache = window.shakeProductImageAspectRatioCache || new Map();
+
+function getProductImageAspectRatio(url)
+{
+    if (!window.shakeProductImageAspectRatioCache.has(url)) {
+        window.shakeProductImageAspectRatioCache.set(url, new Promise((resolve) => {
+            const image = new Image();
+            image.addEventListener("load", () => {
+                resolve(image.naturalWidth ? image.naturalHeight / image.naturalWidth : 0);
+            }, { once: true });
+            image.addEventListener("error", () => {
+                console.error("Could not load a product image for gallery sizing:", url);
+                resolve(0);
+            }, { once: true });
+            image.src = url;
+        }));
+    }
+
+    return window.shakeProductImageAspectRatioCache.get(url);
+}
+
 // Requests Square catalog items and renders the products for the current page.
 async function displayCatalogItems(page)
 {
     try {
-        const items = await window.shakeSquareApi.requestSquareCatalogItems();
+        const catalog = await window.shakeSquareApi.requestSquareCatalogItems();
+        const { items, images, itemOptions } = catalog;
 
         const productScroll = document.querySelector(".product-scroll");
         if (!productScroll) {
             throw new Error("Could not find the product catalog container.");
+        }
+        productScroll.dataset.catalogPage = page;
+        if (page === "SHOP" && !productScroll.dataset.imageRowResizeListenerAttached) {
+            window.addEventListener("resize", alignProductImageRows);
+            productScroll.dataset.imageRowResizeListenerAttached = "true";
         }
 
         productScroll.querySelectorAll(".product-item").forEach((item) => item.remove());
         productScroll.querySelector(".catalog-empty")?.remove();
 
         items.forEach((item, index) => {
-            const catalogItem = new window.CatalogItem(item, index);
+            const catalogItem = new window.CatalogItem(item, index, images, itemOptions);
             if (page === "HOME" && catalogItem.isHomePageFeatured === false) {
                 return;
             }
@@ -569,8 +814,104 @@ async function displayCatalogItems(page)
             emptyMessage.textContent = "No products are available in this Square catalog.";
             productScroll.append(emptyMessage);
         }
+
+        const sortSelect = document.querySelector("#sort");
+        if (sortSelect) {
+            if (!sortSelect.dataset.sortListenerAttached) {
+                sortSelect.addEventListener("change", sortCatalogItems);
+                sortSelect.dataset.sortListenerAttached = "true";
+            }
+            sortCatalogItems();
+        }
     } catch (error) {
         console.error("There was a problem loading the catalog:", error);
     }
+}
+
+// Gives each grid row a shared image area based on each card's tallest gallery image.
+function alignProductImageRows()
+{
+    const productScroll = document.querySelector(".product-scroll");
+    if (
+        !productScroll
+        || productScroll.dataset.catalogPage !== "SHOP"
+        || getComputedStyle(productScroll).display !== "grid"
+    ) {
+        return;
+    }
+
+    const cards = [...productScroll.querySelectorAll(".product-item")];
+    const columnCount = getComputedStyle(productScroll).gridTemplateColumns
+        .split(/\s+/)
+        .filter(Boolean)
+        .length;
+    if (columnCount < 1) {
+        return;
+    }
+
+    for (let index = 0; index < cards.length; index += columnCount) {
+        const row = cards.slice(index, index + columnCount);
+        const imageAreaHeight = Math.max(0, ...row.map((card) => {
+            const image = card.querySelector(".pictureContainer > img");
+            const frame = card.querySelector(".pictureContainer");
+            if (!image || !frame) {
+                return 0;
+            }
+
+            const galleryAspectRatio = Number(card.dataset.maxImageAspectRatio);
+            const currentImageAspectRatio = image.naturalWidth
+                ? image.naturalHeight / image.naturalWidth
+                : 0;
+            const aspectRatio = galleryAspectRatio > 0
+                ? galleryAspectRatio
+                : currentImageAspectRatio;
+
+            return frame.clientWidth * aspectRatio;
+        }));
+
+        row.forEach((card) => {
+            const frame = card.querySelector(".pictureContainer");
+            if (frame) {
+                frame.style.height = imageAreaHeight ? `${imageAreaHeight}px` : "auto";
+            }
+        });
+    }
+}
+
+// Sorts the rendered product cards by their selected catalog field.
+function sortCatalogItems()
+{
+    const productScroll = document.querySelector(".product-scroll");
+    const sortSelect = document.querySelector("#sort");
+    if (!productScroll || !sortSelect) {
+        return;
+    }
+
+    const products = [...productScroll.querySelectorAll(".product-item")];
+    const sortBy = sortSelect.value;
+    products.sort((first, second) => {
+        if (sortBy === "name-asc") {
+            return first.querySelector("h3").textContent.localeCompare(second.querySelector("h3").textContent);
+        }
+        if (sortBy === "name-desc") {
+            return second.querySelector("h3").textContent.localeCompare(first.querySelector("h3").textContent);
+        }
+        if (sortBy === "date-newest") {
+            return Date.parse(second.dataset.createdAt || "") - Date.parse(first.dataset.createdAt || "")
+                || Number(first.dataset.catalogOrder) - Number(second.dataset.catalogOrder);
+        }
+        if (sortBy === "date-oldest") {
+            return Date.parse(first.dataset.createdAt || "") - Date.parse(second.dataset.createdAt || "")
+                || Number(first.dataset.catalogOrder) - Number(second.dataset.catalogOrder);
+        }
+        if (sortBy === "price") {
+            return Number(first.dataset.price) - Number(second.dataset.price);
+        }
+
+        return Number(first.dataset.catalogOrder) - Number(second.dataset.catalogOrder);
+    });
+
+    products.forEach((product) => productScroll.append(product));
+    alignProductImageRows();
 }
 //----------------------------------END OF CATALOG DISPLAY----------------------------------//

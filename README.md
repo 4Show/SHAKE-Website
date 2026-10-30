@@ -24,6 +24,19 @@ The Square location ID is available in the Square Dashboard under **Account & Se
 > Business information > Locations**. The PHP proxy uses the location matching the
 selected environment.
 
+## Contact and newsletter email
+
+The Contact form and newsletter signup send email notifications through PHP's
+`mail()` function. Set `shake_contact_email` and `shake_sender_email` in the
+repository-root `.env` file. The sender address must be accepted by your hosting
+provider's mail service. The PHP server/hosting account must also have a working
+mail transport configured; on local Windows PHP, configure the `[mail function]`
+settings in `php.ini` or use a host with mail support.
+
+Newsletter submissions are notifications to the configured inbox, not entries in a
+managed mailing list. Add subscribers to a mailing-list provider separately if you
+need automated campaigns or unsubscribe management.
+
 Run the site through PHP, using `website-content` as the document root so the
 repository-root `.env` remains outside the public web directory. From the repository
 root, run:

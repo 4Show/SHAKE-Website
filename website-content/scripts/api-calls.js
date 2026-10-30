@@ -31,6 +31,10 @@ window.shakeSquareApi = window.shakeSquareApi || {
             throw new Error("Square Catalog response does not contain an items array.");
         }
 
-        return items;
+        return {
+            items,
+            images: data.images || {},
+            itemOptions: data.item_options || {}
+        };
     }
 };
