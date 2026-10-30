@@ -1,18 +1,35 @@
 <?php
+declare(strict_types=1);
 
-// isset($_POST['$email']) && ($_POST['$email'] != "") && isset($_POST['$name']) && ($_POST['$name'] != "") && isset($_POST['$message']) && ($_POST['$message'])!= "" 
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'email-utils.php';
+shakeEmailRequirePost();
 
+$nameInput = $_POST['name'] ?? null;
+$emailInput = $_POST['email'] ?? null;
+$messageInput = $_POST['message'] ?? null;
+if (!is_string($nameInput) || !is_string($emailInput) || !is_string($messageInput)) {
+    shakeEmailRespond(400, ['error' => 'Enter a valid name, email address, and message.']);
+}
 
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $message = $_POST["message"];
+$name = trim($nameInput);
+$email = trim($emailInput);
+$message = trim($messageInput);
 
-    $headers = "Name: " .$name. "\r\n";
-    $recipient = "4showinvestments@gmail.com";
+if ($name === '' || strlen($name) > 120 || !filter_var($email, FILTER_VALIDATE_EMAIL)
+    || strlen($email) > 254 || $message === '' || strlen($message) > 10000) {
+    shakeEmailRespond(400, ['error' => 'Enter a valid name, email address, and message.']);
+}
 
-    mail($recipient,"SHAKE Support", $message, $headers);
-   
-    echo "message sent";
+$body = "New message from the SHAKE contact form\n\n"
+    . "Name: {$name}\n"
+    . "Email: {$email}\n\n"
+    . "Message:\n{$message}\n";
 
+try {
+    shakeEmailSend('SHAKE website contact message', $body, $email);
+} catch (RuntimeException $error) {
+    error_log($error->getMessage());
+    shakeEmailRespond(500, ['error' => 'We could not send your message right now. Please try again later.']);
+}
 
-?>
+shakeEmailRespond(200, ['message' => 'Thanks for contacting SHAKE. Your message has been sent.']);

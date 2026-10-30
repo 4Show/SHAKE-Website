@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../CSS/HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
+  <script src="../scripts/api-calls.js"></script>
   <script src="../scripts/script.js">
   
   </script>
@@ -25,7 +26,10 @@
   <header>
     <div>
       <img src="../../media/logos/SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="loadCart(); showCart();">🛒 <span id="cartCount">0</span></div>
+      <button type="button" class="cart-icon" onclick="loadCart(); showCart();" aria-label="Open shopping cart">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.1 10.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"></path><circle cx="10" cy="20" r="1.2"></circle><circle cx="18" cy="20" r="1.2"></circle></svg>
+        <span id="cartCount">0</span>
+      </button>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
     <script>
@@ -35,7 +39,7 @@
     
   </header>
 
-  <nav>
+  <nav aria-label="Main navigation">
     <ul>
       <li><a href="../HTML/Home-SHAKE.html">Home</a></li>
       <li><a href="../HTML/Shop-SHAKE.html">Shop</a>
@@ -45,7 +49,7 @@
         </ul>
       </li>
       <li><a href="../HTML/About-SHAKE.html">About Us</a></li>
-      <li><a href="../HTML/Contact-SHAKE.html">Contact</a></li>
+      <li><a href="../HTML/Contact-SHAKE.html" aria-current="page">Contact</a></li>
     </ul>
   </nav>
  
@@ -54,21 +58,22 @@
   
     <div class = "contact-form-container">
         <div class = "formDiv">
-            <form class="contactForm" action= "mailto: 4showinvestments@gmail.com" method="post" enctype="text/plain">
+            <form id="contactForm" class="contactForm" action="../scripts/send-email.php" method="post">
                 <h2>Contact Us</h2>
                 <p>Email: support@shake.com</p>
                 <p>Instagram: <a href="https://www.instagram.com/shk_shake" target="_blank">@shk_shake</a></p>
 
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" maxlength="120" required>
             
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" maxlength="254" required>
             
                 <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
+                <textarea id="message" name="message" maxlength="10000" required></textarea>
             
-                <div style="display: flex; justify-content: center;"><button style="text-align: center;" type="submit" on>Submit</button></div>
+                <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+                <div style="display: flex; justify-content: center;"><button style="text-align: center;" type="submit">Submit</button></div>
             </form>
         </div>
 
@@ -96,51 +101,14 @@
       <div class="subtotal"><h3></h3></div>
       <div class="btn">
         <button class="close" onclick="closeCart();">CLOSE</button>
-        <button class="checkout" onclick="callPaymentLink();">PROCEED TO CHECKOUT</button>
+        <button class="checkout" onclick="redirectToCheckout();">PROCEED TO CHECKOUT</button>
       </div>
     </div>
   
 
+<div data-site-footer></div>
+<script src="../scripts/contact-form.js"></script>
+<script src="../scripts/site-footer.js"></script>
+<script src="../scripts/newsletter.js"></script>
 </body>
-
-
-
-
-
-<footer>
-  <h4>&copy; 2018 SHAKE - Luxury Streetwear.</h4>
-  <h4> All rights reserved.</h4>
-  
-  
-  <div class="footerDiv">
-    <div class="left-section">
-      <img src="../../media/logos/HustlersConceptTag.png" alt="Transparent Image"  width="50%">
-    </div>
-  
-    
-    <div class="right-section">
-      <div class="follow-us">
-        <h3 class="follow">Follow us:</h3>
-        <div>
-          <a href="https://www.instagram.com/shk_shake" target="_blank"><img src="../../media/social/instagram.png" alt="Instagram"></a>
-          <a href="#" target="_blank"><img src="../../media/social/twitter_logo.png" alt="Twitter"></a>
-          <a href="https://www.tiktok.com/@ashake18_" target="_blank"><img src="../../media/social/tiktok_logo.png" alt="TikTok"></a>
-          <a href="#" target="_blank"><img src="../../media/social/facebook_logo.png" alt="Facebook"></a>
-        </div>
-
-      </div>
-  
-      <div class="subscribe">
-        <label for="email">Subscribe to our newsletter:</label>
-        <input type="email" id="email" name="email" placeholder="Your email">
-        <label for="phone">Subscribe via phone:</label>
-        <input type="tel" id="phone" name="phone" placeholder="Your phone number">
-        <button type="submit">Subscribe</button>
-      </div>
-    </div>
-
-  </div>
-
-  
-</footer>
 </html>

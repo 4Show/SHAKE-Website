@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../CSS/HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
+  <script src="../scripts/api-calls.js"></script>
   <script src="../scripts/script.js">
       
   
@@ -13,50 +14,62 @@
   </script>
   <style> 
     .product-scroll {
-      display: inline-block;
-      flex-direction: column;
-      columns: 40% 2;
-      align-items: center;
-      text-align: center;
-      
-      
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
+      align-items: stretch;
+      justify-items: center;
+      width: 90%;
     }
     
     .product-item {
         align-items: center;
-        display: inline-block;
-        width: 40%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        width: 100%;
+        box-sizing: border-box;
         padding: 5%;
-        
-       
     }
 
     .pictureContainer {
+        display: flex;
+        flex: 0 0 auto;
         align-items: center;
         width: 100%;
-        height: auto; 
+        height: auto;
         justify-content: center;
         text-align: center;
     }
 
-
-    
-    .product-item img {
+    .pictureContainer > img {
         width: 100%;
         height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         border-radius: 5px;
-        object-fit: cover;
-        align-items: center;
+        object-fit: contain;
     }
     
     .product-details {
+        flex: 0 0 auto;
         margin-top: 10px;
         text-align: center;
-        flex-grow: 1;
+        width: 100%;
         padding-left: 0%; /* Add padding to the left of product details */
         overflow-wrap: break-word;
-        width: 50%;
-        height: auto;
+    }
+
+    .product-details h3 {
+        min-height: 2.4em;
+        line-height: 1.2;
+    }
+
+    .color-selection {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
     
     .price {
@@ -67,9 +80,14 @@
         background-color: #e84946;
         color: #fff;
         padding: 5px 10px;
-        border: none;
+        border: 1px solid transparent;
+        border-radius: 5px;
         cursor: pointer;
         margin-top: 10px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-weight: 650;
+        letter-spacing: .025em;
+        transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease;
     }
 
     .button-group {
@@ -85,22 +103,17 @@
             font-size: 12px;
           }
           .product-scroll {
-            
-            width:100%;
-            flex-direction: column;
-            height: 50%;
-            display: flex;
+            width: 100%;
           }
-          .product-item img {
+          .pictureContainer > img {
             max-width: 100%;
             width: 100%;
-            height: auto;
+            height: 100%;
             border-radius: 5px;
-            object-fit: cover;
+            object-fit: contain;
           }
 
           .product-item{
-            display: inline-block;
             width: 100%;
 
           }
@@ -132,7 +145,10 @@
     <header>
         <div>
           <img src="../../media/logos/SHK-Logo.png" alt="SHK Logo">
-          <div class="cart-icon" onclick="loadCart(); showCart();">🛒 <span id="cartCount" >0</span></div>
+          <button type="button" class="cart-icon" onclick="loadCart(); showCart();" aria-label="Open shopping cart">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.1 10.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"></path><circle cx="10" cy="20" r="1.2"></circle><circle cx="18" cy="20" r="1.2"></circle></svg>
+            <span id="cartCount">0</span>
+          </button>
               <script>
                 // Update cart count when the page is loaded
               document.addEventListener('DOMContentLoaded', function() {
@@ -144,10 +160,10 @@
         
       </header>
 
-      <nav>
+      <nav aria-label="Main navigation">
         <ul>
           <li><a href="../HTML/Home-SHAKE.html">Home</a></li>
-          <li><a href="../HTML/Shop-SHAKE.html">Shop</a>
+          <li><a href="../HTML/Shop-SHAKE.html" aria-current="page">Shop</a>
             <ul class="submenu">
               <li><a href="#">Men</a></li>
               <li><a href="#">Women</a></li>
@@ -178,8 +194,7 @@
       <script>
           // Update cart count when the page is loaded
         document.addEventListener('DOMContentLoaded', function() {
-          getCatalog("SHOP");
-          shopPage();
+          displayCatalogItems("SHOP");
         });
       </script>
         <!-- Product 1 -->
@@ -214,7 +229,7 @@
         <div class="subtotal"><h3></h3></div>
         <div class="btn">
           <button class="close" onclick="closeCart()">CLOSE</button>
-          <button class="checkout" onclick="callPaymentLink();">PROCEED TO CHECKOUT</button>
+          <button class="checkout" onclick="redirectToCheckout();">PROCEED TO CHECKOUT</button>
         </div>
       </div>
 
@@ -253,5 +268,7 @@
     
         
       </footer>
+      <script src="../scripts/site-footer.js"></script>
+      <script src="../scripts/newsletter.js"></script>
 </body>   
 </html>
