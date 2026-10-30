@@ -2,6 +2,26 @@
 
 //----------------------------------CART FUNCTIONALITY----------------------------------//
 
+// Returns a safe image URL for use in img.src. Allows relative URLs and http/https.
+function sanitizeImageUrl(url)
+{
+    if (typeof url !== "string") return "images/placeholder.png";
+    const trimmed = url.trim();
+    if (!trimmed) return "images/placeholder.png";
+
+    try {
+        const parsed = new URL(trimmed, window.location.origin);
+        const protocol = parsed.protocol.toLowerCase();
+        if (protocol === "http:" || protocol === "https:") {
+            return parsed.href;
+        }
+    } catch (e) {
+        // Keep fallback below for malformed values.
+    }
+
+    return "images/placeholder.png";
+}
+
 // Adds the selected size of a product to the session cart and updates its count.
 function toggleCart(cartNode)
 {
@@ -30,7 +50,7 @@ function toggleCart(cartNode)
         price: productDetails.querySelector(".price").textContent,
         size: selectedButton.parentElement.innerText,
         color: colorSelect?.value || "",
-        image: productContainer.querySelector("img").getAttribute("src"),
+        image: sanitizeImageUrl(productContainer.querySelector("img").getAttribute("src")),
         quantity: 1,
         cartId
     };
@@ -121,7 +141,7 @@ function loadCart()
 
                 //gets the image
                 let img = document.createElement("img");
-                img.setAttribute("src", cart[i].image);
+                img.setAttribute("src", sanitizeImageUrl(cart[i].image));
                 img.style.maxHeight = "auto";
                 img.style.maxWidth = "100%";
                 divContainer.appendChild(img);
