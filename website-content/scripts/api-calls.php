@@ -6,7 +6,7 @@ header('Content-Type: application/json; charset=utf-8');
 /**
  * Writes a JSON error response and stops processing the request.
  */
-function shakeApiRespondWithError(int $status, string $message): void
+function shakeSquareRespondWithError(int $status, string $message): void
 {
     http_response_code($status);
     echo json_encode(['error' => $message], JSON_THROW_ON_ERROR);
@@ -14,68 +14,88 @@ function shakeApiRespondWithError(int $status, string $message): void
 }
 
 /**
- * Reads a configured endpoint from the process environment or the repository .env file.
+ * Reads a value from the process environment or the repository-root .env file.
  */
-function shakeApiGetConfiguredEndpoint(string $name): string
+function shakeSquareGetConfigValue(string $name): string
 {
     $value = getenv($name);
     if ($value !== false && trim($value) !== '') {
-        $endpoint = trim($value);
-    } else {
-        $envPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.env';
-        if (!is_file($envPath) || !is_readable($envPath)) {
-            throw new RuntimeException("Missing server configuration for {$name}.");
+        return trim($value);
+    }
+
+    $envPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.env';
+    if (!is_file($envPath) || !is_readable($envPath)) {
+        throw new RuntimeException("Missing server configuration: {$name}.");
+    }
+
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES);
+    if ($lines === false) {
+        throw new RuntimeException('Unable to read the server environment file.');
+    }
+
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
+            continue;
         }
 
-        $lines = file($envPath, FILE_IGNORE_NEW_LINES);
-        if ($lines === false) {
-            throw new RuntimeException('Unable to read the server environment file.');
+        [$key, $value] = explode('=', $line, 2);
+        if (trim($key) !== $name) {
+            continue;
         }
 
-        $endpoint = '';
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if ($line === '' || str_starts_with($line, '#') || !str_contains($line, '=')) {
-                continue;
-            }
+        $value = trim($value);
+        if (
+            strlen($value) >= 2
+            && (($value[0] === '"' && str_ends_with($value, '"'))
+                || ($value[0] === "'" && str_ends_with($value, "'")))
+        ) {
+            $value = substr($value, 1, -1);
+        }
 
-            [$key, $configuredValue] = explode('=', $line, 2);
-            if (trim($key) !== $name) {
-                continue;
-            }
-
-            $endpoint = trim($configuredValue);
-            if (
-                strlen($endpoint) >= 2
-                && (($endpoint[0] === '"' && str_ends_with($endpoint, '"'))
-                    || ($endpoint[0] === "'" && str_ends_with($endpoint, "'")))
-            ) {
-                $endpoint = substr($endpoint, 1, -1);
-            }
+        if ($value === '') {
             break;
         }
+
+        return $value;
     }
 
-    $urlParts = parse_url($endpoint);
-    if (
-        filter_var($endpoint, FILTER_VALIDATE_URL) === false
-        || ($urlParts['scheme'] ?? '') !== 'https'
-    ) {
-        throw new RuntimeException("Set {$name} to a valid HTTPS endpoint in the server environment.");
-    }
-
-    return $endpoint;
+    throw new RuntimeException("Missing server configuration: {$name}.");
 }
 
 /**
- * Sends a request to one configured backend function and returns its response and status.
+ * Gets the selected Square environment, defaulting to sandbox for safe testing.
  */
-function shakeApiForwardRequest(string $endpoint, string $method, ?string $body = null): array
+function shakeSquareGetEnvironment(): string
 {
+    $environment = strtolower(shakeSquareGetConfigValue('square_environment'));
+    if (!in_array($environment, ['sandbox', 'prod'], true)) {
+        throw new RuntimeException('square_environment must be sandbox or prod.');
+    }
+
+    return $environment;
+}
+
+/**
+ * Calls a Square REST endpoint using the selected environment's server-side token.
+ *
+ * @return array{0:int,1:string}
+ */
+function shakeSquareRequest(string $method, string $path, ?string $body = null): array
+{
+    $environment = shakeSquareGetEnvironment();
+    $token = shakeSquareGetConfigValue("square_access_token-{$environment}");
+    $host = $environment === 'sandbox'
+        ? 'https://connect.squareupsandbox.com'
+        : 'https://connect.squareup.com';
     $options = [
         'http' => [
             'method' => $method,
-            'header' => "Accept: application/json\r\nContent-Type: application/json\r\n",
+            'header' => implode("\r\n", [
+                "Authorization: Bearer {$token}",
+                'Accept: application/json',
+                'Content-Type: application/json',
+            ]) . "\r\n",
             'timeout' => 20,
             'ignore_errors' => true,
         ],
@@ -86,16 +106,16 @@ function shakeApiForwardRequest(string $endpoint, string $method, ?string $body 
 
     $context = stream_context_create($options);
     set_error_handler(static function (int $severity, string $message): void {
-        throw new RuntimeException('Could not reach the configured Square backend.');
+        throw new RuntimeException('Could not connect to the Square API.');
     });
     try {
-        $responseBody = file_get_contents($endpoint, false, $context);
+        $responseBody = file_get_contents($host . $path, false, $context);
     } finally {
         restore_error_handler();
     }
 
     if ($responseBody === false) {
-        throw new RuntimeException('The configured Square backend returned no response.');
+        throw new RuntimeException('Square returned no response.');
     }
 
     $status = 502;
@@ -110,52 +130,102 @@ function shakeApiForwardRequest(string $endpoint, string $method, ?string $body 
 
 try {
     $action = $_GET['action'] ?? '';
-    if ($action === 'catalog' && $_SERVER['REQUEST_METHOD'] === 'GET') {
-        $endpoint = shakeApiGetConfiguredEndpoint('SQUARE_CATALOG_FUNCTION_URL');
-        [$status, $responseBody] = shakeApiForwardRequest($endpoint, 'GET');
-    } elseif ($action === 'payment-link' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $method = $_SERVER['REQUEST_METHOD'] ?? '';
+
+    if ($action === 'catalog' && $method === 'GET') {
+        $objects = [];
+        $cursor = null;
+
+        do {
+            $query = ['types' => 'ITEM'];
+            if ($cursor !== null) {
+                $query['cursor'] = $cursor;
+            }
+
+            [$status, $responseBody] = shakeSquareRequest(
+                'GET',
+                '/v2/catalog/list?' . http_build_query($query)
+            );
+            if ($status < 200 || $status >= 300) {
+                http_response_code($status);
+                echo $responseBody;
+                exit;
+            }
+
+            $page = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+            $objects = array_merge($objects, $page['objects'] ?? []);
+            $cursor = $page['cursor'] ?? null;
+        } while ($cursor !== null);
+
+        echo json_encode(['items' => $objects], JSON_THROW_ON_ERROR);
+    } elseif ($action === 'payment-link' && $method === 'POST') {
         $requestBody = file_get_contents('php://input');
         if ($requestBody === false) {
-            shakeApiRespondWithError(400, 'Could not read the payment request.');
+            shakeSquareRespondWithError(400, 'Could not read the payment request.');
         }
 
         try {
             $payload = json_decode($requestBody, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
-            shakeApiRespondWithError(400, 'Payment request must contain valid JSON.');
+            shakeSquareRespondWithError(400, 'Payment request must contain valid JSON.');
         }
 
-        $lineItems = is_array($payload) ? ($payload['line_items'] ?? null) : null;
-        if (!is_array($lineItems) || $lineItems === []) {
-            shakeApiRespondWithError(400, 'Payment request must include at least one line item.');
+        $requestedLineItems = is_array($payload) ? ($payload['line_items'] ?? null) : null;
+        if (!is_array($requestedLineItems) || $requestedLineItems === []) {
+            shakeSquareRespondWithError(400, 'Payment request must include at least one line item.');
         }
-        foreach ($lineItems as $lineItem) {
+        $lineItems = [];
+        foreach ($requestedLineItems as $lineItem) {
             if (
                 !is_array($lineItem)
                 || !is_string($lineItem['catalog_object_id'] ?? null)
                 || !ctype_digit((string) ($lineItem['quantity'] ?? ''))
                 || (int) $lineItem['quantity'] < 1
-                || ($lineItem['item_type'] ?? null) !== 'ITEM'
             ) {
-                shakeApiRespondWithError(400, 'Payment request contains an invalid line item.');
+                shakeSquareRespondWithError(400, 'Payment request contains an invalid line item.');
             }
+
+            $lineItems[] = [
+                'catalog_object_id' => $lineItem['catalog_object_id'],
+                'quantity' => (string) (int) $lineItem['quantity'],
+            ];
         }
 
-        $endpoint = shakeApiGetConfiguredEndpoint('SQUARE_PAYMENT_LINK_FUNCTION_URL');
-        [$status, $responseBody] = shakeApiForwardRequest(
-            $endpoint,
-            'POST',
-            json_encode(['line_items' => $lineItems], JSON_THROW_ON_ERROR)
+        $locationId = shakeSquareGetConfigValue(
+            'square_location_id-' . shakeSquareGetEnvironment()
         );
+        $squareRequest = [
+            'idempotency_key' => bin2hex(random_bytes(16)),
+            'order' => [
+                'location_id' => $locationId,
+                'line_items' => $lineItems,
+            ],
+        ];
+        [$status, $responseBody] = shakeSquareRequest(
+            'POST',
+            '/v2/online-checkout/payment-links',
+            json_encode($squareRequest, JSON_THROW_ON_ERROR)
+        );
+
+        if ($status < 200 || $status >= 300) {
+            http_response_code($status);
+            echo $responseBody;
+            exit;
+        }
+
+        $response = json_decode($responseBody, true, 512, JSON_THROW_ON_ERROR);
+        $paymentUrl = $response['payment_link']['url'] ?? null;
+        if (!is_string($paymentUrl) || filter_var($paymentUrl, FILTER_VALIDATE_URL) === false) {
+            throw new RuntimeException('Square did not return a valid payment-link URL.');
+        }
+
         header_remove('Content-Type');
         header('Content-Type: text/plain; charset=utf-8');
+        echo $paymentUrl;
     } else {
-        shakeApiRespondWithError(404, 'Unknown Square API action.');
+        shakeSquareRespondWithError(404, 'Unknown Square API action.');
     }
-
-    http_response_code($status);
-    echo $responseBody;
 } catch (Throwable $error) {
-    error_log('Square API proxy error: ' . $error->getMessage());
-    shakeApiRespondWithError(502, 'The Square service request failed.');
+    error_log('Square API request error: ' . $error->getMessage());
+    shakeSquareRespondWithError(502, 'The Square API request failed.');
 }

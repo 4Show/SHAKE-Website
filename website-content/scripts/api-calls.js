@@ -1,6 +1,6 @@
 // Calls the same-origin PHP proxy so browser code never reads backend endpoint URLs.
 window.shakeSquareApi = window.shakeSquareApi || {
-    // Requests a Square Payment Link from the configured payment-link Lambda function.
+    // Requests Square to create a Payment Link for the selected cart items.
     async requestSquarePaymentLink(lineItems) {
         const response = await fetch("../scripts/api-calls.php?action=payment-link", {
             method: "POST",
@@ -17,7 +17,7 @@ window.shakeSquareApi = window.shakeSquareApi || {
         return response.text();
     },
 
-    // Requests the Square catalog from the configured catalog Lambda function.
+    // Requests catalog items directly from Square through the server-side PHP proxy.
     async requestSquareCatalogItems() {
         const response = await fetch("../scripts/api-calls.php?action=catalog");
 

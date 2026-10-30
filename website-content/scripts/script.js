@@ -117,7 +117,10 @@ function loadCart()
 
                 //gets the image
                 let img = document.createElement("img");
-                img.setAttribute('src',"media/products/" + cart[i].image);
+                const cartImage = cart[i].image.startsWith("media/products/")
+                    ? `../${cart[i].image}`
+                    : cart[i].image;
+                img.setAttribute("src", cartImage);
                 img.style.maxHeight = "auto";
                 img.style.maxWidth = "100%";
                 divContainer.appendChild(img);
@@ -429,7 +432,7 @@ async function redirectToCheckout()
     }
 
     try {
-        const paymentLink = await window.shakeApiRequests.fetchSquarePaymentLink(lineOrderItems);
+        const paymentLink = await window.shakeSquareApi.requestSquarePaymentLink(lineOrderItems);
         window.location.href = paymentLink;
     } catch (error) {
         console.error("There was a problem creating the payment link:", error);
@@ -464,7 +467,7 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
         pictureContainer.className = "pictureContainer";
 
         const image = document.createElement("img");
-        image.src = `media/products/${this.imageIds[0] || ""}`;
+        image.src = `../media/products/${this.imageIds[0] || ""}`;
         image.alt = this.name;
         pictureContainer.append(image);
         node.append(pictureContainer);
@@ -541,7 +544,7 @@ window.CatalogItem = window.CatalogItem || class CatalogItem
 async function displayCatalogItems(page)
 {
     try {
-        const items = await window.shakeApiRequests.fetchSquareCatalogItems();
+        const items = await window.shakeSquareApi.requestSquareCatalogItems();
 
         const productScroll = document.querySelector(".product-scroll");
         if (!productScroll) {
@@ -549,6 +552,7 @@ async function displayCatalogItems(page)
         }
 
         productScroll.querySelectorAll(".product-item").forEach((item) => item.remove());
+        productScroll.querySelector(".catalog-empty")?.remove();
 
         items.forEach((item, index) => {
             const catalogItem = new window.CatalogItem(item, index);
@@ -558,6 +562,13 @@ async function displayCatalogItems(page)
 
             productScroll.append(catalogItem.render());
         });
+
+        if (!productScroll.querySelector(".product-item")) {
+            const emptyMessage = document.createElement("p");
+            emptyMessage.className = "catalog-empty";
+            emptyMessage.textContent = "No products are available in this Square catalog.";
+            productScroll.append(emptyMessage);
+        }
     } catch (error) {
         console.error("There was a problem loading the catalog:", error);
     }
