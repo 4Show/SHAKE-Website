@@ -36,7 +36,7 @@ class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if urllib.parse.urlsplit(self.path).path != "/api/catalog":
             return self.respond(404, {"error": "Not found"})
-        token = os.environ.get("SQUARE_ACCESS_TOKEN", "").strip()
+        token = (os.environ.get("SQUARE_ACCESS_TOKEN") or os.environ.get("square_access_token_prod") or "").strip()
         if not token:
             return self.respond(503, {"error": "Square production access is not configured"})
         if os.environ.get("SQUARE_ENVIRONMENT", "production").lower() != "production":
