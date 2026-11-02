@@ -17,9 +17,9 @@ window.shakeSquareApi = window.shakeSquareApi || {
         return response.text();
     },
 
-    // Requests catalog items directly from Square through the server-side PHP proxy.
+    // Requests the live Square catalog through a read-only Python Vercel function.
     async requestSquareCatalogItems() {
-        const response = await fetch("../scripts/api-calls.php?action=catalog");
+        const response = await fetch("/api/catalog");
 
         if (!response.ok) {
             throw new Error(`Square Catalog request failed: ${response.status} ${response.statusText}`);
