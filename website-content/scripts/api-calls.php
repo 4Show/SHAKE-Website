@@ -217,6 +217,13 @@ try {
                 'location_id' => $locationId,
                 'line_items' => $lineItems,
             ],
+            'checkout_options' => [
+                'ask_for_shipping_address' => true,
+                'accepted_payment_methods' => [
+                    'apple_pay' => true,
+                    'cash_app_pay' => true,
+                ],
+            ],
         ];
         [$status, $responseBody] = shakeSquareRequest(
             'POST',

@@ -80,17 +80,183 @@ function toggleCart(cartNode)
 // Opens the shopping-cart drawer.
 function showCart()
 {
-     //transitions the cart open
-     transWin = document.querySelector(".cartTab");
-     transWin.style.right = "0%";
+    const cartDrawer = document.querySelector(".cartTab");
+    if (!cartDrawer) {
+        return;
+    }
+
+    cartDrawer.classList.add("is-open");
+    cartDrawer.setAttribute("aria-hidden", "false");
+    document.querySelectorAll(".cart-icon").forEach((button) => {
+        button.setAttribute("aria-expanded", "true");
+    });
+    const cartContent = cartDrawer.querySelector(".cartContent");
+    if (cartContent) {
+        updateCartScrollControls(cartDrawer, cartContent);
+    }
 }
 // Closes the shopping-cart drawer and refreshes the displayed cart count.
 function closeCart()
 {
-    closeBtn = document.querySelector(".cartTab");
-    closeBtn.style.right = "-400px";
-    
+    const cartDrawer = document.querySelector(".cartTab");
+    if (!cartDrawer) {
+        return;
+    }
+
+    cartDrawer.classList.remove("is-open");
+    cartDrawer.setAttribute("aria-hidden", "true");
+    document.querySelectorAll(".cart-icon").forEach((button) => {
+        button.setAttribute("aria-expanded", "false");
+    });
     updateCartCountDisplay();
+}
+
+function toggleCartDrawer()
+{
+    const cartDrawer = document.querySelector(".cartTab");
+    if (!cartDrawer) {
+        loadCart();
+        return;
+    }
+
+    loadCart();
+    if (cartDrawer.classList.contains("is-open")) {
+        closeCart();
+        return;
+    }
+
+    showCart();
+}
+
+function setupCartDrawer()
+{
+    const cartDrawer = document.querySelector(".cartTab");
+    const cartButton = document.querySelector(".cart-icon");
+    if (!cartButton) {
+        return;
+    }
+
+    if (!cartDrawer) {
+        if (cartButton.dataset.cartClickReady !== "true") {
+            cartButton.setAttribute("aria-expanded", "false");
+            cartButton.addEventListener("click", () => {
+                loadCart();
+                document.querySelector(".checkout-summary")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            });
+            cartButton.dataset.cartClickReady = "true";
+        }
+        return;
+    }
+
+    if (cartDrawer.dataset.interactionReady === "true") {
+        return;
+    }
+
+    cartButton.setAttribute("aria-expanded", "false");
+    cartDrawer.setAttribute("aria-hidden", "true");
+    cartButton.addEventListener("click", toggleCartDrawer);
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && cartDrawer.classList.contains("is-open")) {
+            closeCart();
+        }
+    });
+
+    cartDrawer.dataset.interactionReady = "true";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupCartDrawer();
+    if (document.querySelector(".cartTab")) {
+        loadCart();
+    }
+});
+
+function setupCartScrollControls(cartContainer, cartContent)
+{
+    let controls = cartContainer.querySelector(".cart-scroll-controls");
+    if (!controls) {
+        controls = document.createElement("div");
+        controls.className = "cart-scroll-controls";
+        controls.setAttribute("role", "group");
+        controls.setAttribute("aria-label", "Scroll through cart items");
+
+        const previousButton = document.createElement("button");
+        previousButton.type = "button";
+        previousButton.className = "cart-scroll-previous";
+        previousButton.setAttribute("aria-label", "Previous cart item");
+        previousButton.textContent = "↑";
+
+        const nextButton = document.createElement("button");
+        nextButton.type = "button";
+        nextButton.className = "cart-scroll-next";
+        nextButton.setAttribute("aria-label", "Next cart item");
+        nextButton.textContent = "↓";
+
+        controls.append(previousButton, nextButton);
+        cartContainer.insertBefore(controls, cartContent);
+
+        previousButton.addEventListener("click", () => scrollCartItem(cartContent, -1));
+        nextButton.addEventListener("click", () => scrollCartItem(cartContent, 1));
+        cartContent.addEventListener("scroll", () => updateCartScrollControls(cartContainer, cartContent));
+    }
+
+    updateCartScrollControls(cartContainer, cartContent);
+}
+
+function updateCartScrollControls(cartContainer, cartContent)
+{
+    const items = [...cartContent.querySelectorAll(".itemDiv")];
+    const controls = cartContainer.querySelector(".cart-scroll-controls");
+    if (!controls) {
+        return;
+    }
+
+    controls.hidden = items.length < 2;
+    const maxScroll = cartContent.scrollHeight - cartContent.clientHeight;
+    controls.querySelector(".cart-scroll-previous").disabled = items.length < 2
+        || cartContent.scrollTop <= 2;
+    controls.querySelector(".cart-scroll-next").disabled = items.length < 2
+        || cartContent.scrollTop >= maxScroll - 2;
+}
+
+function scrollCartItem(cartContent, direction)
+{
+    const items = [...cartContent.querySelectorAll(".itemDiv")];
+    if (items.length < 2) {
+        return;
+    }
+
+    const currentTop = cartContent.getBoundingClientRect().top;
+    const currentIndex = items.findIndex((item) => {
+        const bounds = item.getBoundingClientRect();
+        return bounds.bottom > currentTop + 8;
+    });
+    const targetIndex = Math.max(0, Math.min(
+        items.length - 1,
+        (currentIndex < 0 ? 0 : currentIndex) + direction
+    ));
+    const target = items[targetIndex];
+    const top = cartContent.scrollTop
+        + target.getBoundingClientRect().top
+        - currentTop;
+
+    target.classList.remove("cart-item-jolt");
+    void target.offsetWidth;
+    target.classList.add("cart-item-jolt");
+    cartContent.scrollTo({ top, behavior: "smooth" });
+    target.addEventListener("animationend", () => {
+        target.classList.remove("cart-item-jolt");
+    }, { once: true });
+    window.setTimeout(() => target.classList.remove("cart-item-jolt"), 700);
+    window.setTimeout(() => {
+        const cartContainer = cartContent.closest(".cartTab, .checkout-summary");
+        if (cartContainer) {
+            updateCartScrollControls(cartContainer, cartContent);
+        }
+    }, 350);
 }
 // Rebuilds the cart drawer from products saved in session storage.
 function loadCart()
@@ -104,6 +270,17 @@ function loadCart()
 
     // Display cart content
     const cartContent = document.querySelector('.cartContent');
+    const cartContainer = cartContent?.closest(".cartTab, .checkout-summary");
+    if (cartContainer) {
+        if (cartContainer.matches(".cartTab")) {
+            setupCartDrawer();
+        }
+        setupCartScrollControls(cartContainer, cartContent);
+    }
+    if (!cartContent) {
+        return;
+    }
+
     //removes all prexisting cart items from before and refreshes
     while(cartContent.firstChild)
     {
@@ -111,6 +288,18 @@ function loadCart()
     }
     var subtotal = 0;
 
+    if (cart.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "checkout-empty";
+        emptyMessage.textContent = "Your cart is empty.";
+        cartContent.appendChild(emptyMessage);
+        document.querySelector(".subtotal h3").textContent = "Subtotal: $0.00";
+        updateCartCountDisplay();
+        if (cartContainer) {
+            updateCartScrollControls(cartContainer, cartContent);
+        }
+        return;
+    }
 
     for(i =0; i < cart.length  ; i++)
     {
@@ -228,12 +417,13 @@ function loadCart()
 
                 //append the information to the cartContainer
                 cartContent.appendChild(divContainer);
-                cartContent.style.overflowY = "auto";
-                cartContent.style.padding = "0 -0px 0 0";
-                cartContent.style.boxSizing = "content-box";     
-                cartContent.style.width = "100%";
-                cartContent.style.height = "100%";    
         }   
+    }
+
+    document.querySelector(".subtotal h3").textContent = `Subtotal: $${subtotal.toFixed(2)}`;
+    updateCartCountDisplay();
+    if (cartContainer) {
+        updateCartScrollControls(cartContainer, cartContent);
     }
    
 }
@@ -448,6 +638,16 @@ async function redirectToCheckout()
 
     // Get cart data from sessionStorage
     const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+    const checkoutButton = document.querySelector(".checkout-submit");
+    const checkoutStatus = document.querySelector("[data-checkout-status]");
+    if (cart.length === 0) {
+        if (checkoutStatus) {
+            checkoutStatus.textContent = "Add an item to your cart before checking out.";
+        } else {
+            alert("Your cart is empty.");
+        }
+        return;
+    }
 
     for (const item of cart) {
         lineOrderItems.push({
@@ -458,10 +658,27 @@ async function redirectToCheckout()
     }
 
     try {
+        if (checkoutButton) {
+            checkoutButton.disabled = true;
+            checkoutButton.textContent = "Connecting to Square...";
+        }
+        if (checkoutStatus) {
+            checkoutStatus.textContent = "";
+        }
         const paymentLink = await window.shakeSquareApi.requestSquarePaymentLink(lineOrderItems);
         window.location.href = paymentLink;
     } catch (error) {
         console.error("There was a problem creating the payment link:", error);
+        if (checkoutStatus) {
+            checkoutStatus.textContent = "We couldn't start checkout. Please try again.";
+        } else {
+            alert("We couldn't start checkout. Please try again.");
+        }
+    } finally {
+        if (checkoutButton && window.location.href.includes("Checkout-SHAKE.html")) {
+            checkoutButton.disabled = false;
+            checkoutButton.textContent = "Continue to Square";
+        }
     }
 }
 
