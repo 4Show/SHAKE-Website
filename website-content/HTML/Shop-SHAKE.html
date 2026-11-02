@@ -53,16 +53,23 @@
     
     .product-details {
         flex: 0 0 auto;
+        display: block;
         margin-top: 10px;
         text-align: center;
         width: 100%;
         padding-left: 0%; /* Add padding to the left of product details */
         overflow-wrap: break-word;
+        min-width: 0;
     }
 
     .product-details h3 {
-        min-height: 2.4em;
+        min-height: 0;
         line-height: 1.2;
+    }
+
+    .product-details > * {
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     .color-selection {
@@ -92,16 +99,91 @@
 
     .button-group {
         display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
         margin-top: 10px;
         margin-bottom: 10px;
-        align-items: right;
+        align-items: center;
         justify-content: center;
       }
+
+    .button-group .button-label {
+        min-width: 42px;
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 8px 10px;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+
+    .product-details .add-to-cart {
+        min-height: 44px;
+        padding: 10px 18px;
+        font-size: 14px;
+      }
+
+    .color-selection {
+        flex-wrap: wrap;
+      }
+
+    .color-select {
+        min-height: 42px;
+        min-width: 0;
+        font-size: 14px;
+      }
+
+    @media screen and (max-width: 760px) {
+      .product-scroll {
+        grid-template-columns: minmax(0, 1fr);
+        width: min(100%, 560px);
+        margin: 0 auto;
+      }
+
+      .product-item {
+        padding: 16px;
+      }
+
+      .pictureContainer {
+        width: 100%;
+      }
+
+      .pictureContainer > img {
+        max-height: 75vh;
+      }
+
+      .product-details {
+        display: block;
+        height: auto;
+        font-size: 16px;
+      }
+
+      .product-details h3 {
+        margin: 12px 0 8px;
+        font-size: 1.25rem;
+      }
+
+      .product-details .description {
+        line-height: 1.5;
+      }
+
+      .button-group {
+        width: 100%;
+      }
+
+      .button-group .button-label {
+        flex: 0 1 auto;
+      }
+
+      .product-details .add-to-cart {
+        width: min(100%, 280px);
+      }
+    }
+
         @media screen and (max-width: 1130px)
         {
-          html{
-            font-size: 12px;
-          }
           .product-scroll {
             width: 100%;
           }
@@ -122,6 +204,7 @@
           {
             width:100%;
             height:auto;
+            display: block;
           }
 
           .pictureContainer
@@ -129,7 +212,6 @@
             width:100%;
             height:auto;
           }
-
 
         }
     
