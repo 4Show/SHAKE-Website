@@ -1,8 +1,9 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/",
-      "destination": "/website-content/HTML/Home-SHAKE.html"
+      "destination": "/website-content/HTML/Home-SHAKE.html",
+      "permanent": false
     }
   ]
 }
