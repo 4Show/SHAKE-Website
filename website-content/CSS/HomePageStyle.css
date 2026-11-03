@@ -1295,6 +1295,50 @@ body {
   cursor: pointer;
 }
 
+.shake-audio-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 22;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  padding: .55rem .85rem;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 999px;
+  background: #222;
+  color: #fff;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, .22);
+  font: 650 .78rem/1 "Segoe UI", Arial, sans-serif;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: background-color .18s ease, transform .18s ease;
+}
+
+.shake-audio-toggle:hover {
+  transform: translateY(-2px);
+  background: #383532;
+}
+
+.shake-audio-toggle:focus-visible {
+  outline: 2px solid #e84946;
+  outline-offset: 3px;
+}
+
+.shake-audio-icon {
+  color: #ff8a86;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 600px) {
+  .shake-audio-toggle {
+    right: .75rem;
+    bottom: .75rem;
+  }
+}
+
 .cartTab .btn .close
 {
   background-color: #e84946;
