@@ -6,9 +6,109 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../CSS/HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
+  <script src="../scripts/api-calls.js"></script>
   <script src="../scripts/script.js"></script>
   <style>
-    
+    #about {
+      display: grid;
+      min-height: clamp(620px, calc(100svh - 240px), 900px);
+      place-items: center;
+      padding: clamp(2rem, 6vw, 5rem) 1.25rem;
+      box-sizing: border-box;
+    }
+
+    .about-postcard {
+      position: relative;
+      width: min(100%, 760px);
+      padding: clamp(1.5rem, 5vw, 3.5rem);
+      box-sizing: border-box;
+      border: 1px solid #d9cdb9;
+      background-color: #fffaf0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 2.25rem,
+        rgba(110, 93, 73, .09) 2.3rem,
+        transparent 2.35rem
+      );
+      box-shadow: 0 18px 45px rgba(58, 43, 30, .14);
+      transform: rotate(-.6deg);
+    }
+
+    .postcard-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(110, 93, 73, .24);
+      color: #8d3933;
+      font: 700 .75rem/1.4 "Segoe UI", Arial, sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .postcard-stamp {
+      display: grid;
+      width: 66px;
+      height: 66px;
+      flex: 0 0 66px;
+      place-content: center;
+      border: 1px dashed #c64b44;
+      border-radius: 50%;
+      color: #c64b44;
+      font-size: .68rem;
+      letter-spacing: .04em;
+      line-height: 1.35;
+      text-align: center;
+      transform: rotate(9deg);
+    }
+
+    .about-postcard h1 {
+      margin: 1.6rem 0 1rem;
+      color: #332a24;
+      font: italic 500 clamp(1.8rem, 5vw, 2.65rem)/1.2 "Segoe Print", "Bradley Hand", cursive;
+      text-align: center;
+    }
+
+    .postcard-message {
+      color: #40372f;
+      font: 400 clamp(1rem, 2.2vw, 1.2rem)/1.95 "Segoe Print", "Bradley Hand", cursive;
+    }
+
+    .postcard-message p {
+      margin: 1rem 0;
+    }
+
+    .postcard-message strong {
+      color: #9e3935;
+      font-weight: 700;
+    }
+
+    .postcard-signoff {
+      margin: 1.5rem 0 .25rem;
+      color: #9e3935;
+      font: italic 600 clamp(1.05rem, 2.4vw, 1.3rem)/1.7 "Segoe Print", "Bradley Hand", cursive;
+      text-align: center;
+    }
+
+    .postcard-signature {
+      margin: .4rem 0 0;
+      color: #40372f;
+      font: italic 600 1.15rem/1.5 "Segoe Print", "Bradley Hand", cursive;
+      text-align: right;
+    }
+
+    @media (max-width: 600px) {
+      #about {
+        min-height: 0;
+        padding: 2rem 1rem;
+      }
+
+      .about-postcard {
+        transform: none;
+      }
+    }
   </style>
 </head>
 
@@ -21,7 +121,10 @@
   <header>
     <div>
       <img src="../../media/logos/SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="loadCart(); showCart();">🛒 <span id="cartCount">0</span></div>
+      <button type="button" class="cart-icon" aria-label="Open shopping cart">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.1 10.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"></path><circle cx="10" cy="20" r="1.2"></circle><circle cx="18" cy="20" r="1.2"></circle></svg>
+        <span id="cartCount">0</span>
+      </button>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
     <script>
@@ -30,7 +133,7 @@
     </script>
   </header>
 
-  <nav>
+  <nav aria-label="Main navigation">
     <ul>
       <li><a href="../HTML/Home-SHAKE.html">Home</a></li>
       <li><a href="../HTML/Shop-SHAKE.html">Shop</a>
@@ -39,16 +142,28 @@
           <li><a href="#">Women</a></li>
         </ul>
       </li>
-      <li><a href="../HTML/About-SHAKE.html">About Us</a></li>
+      <li><a href="../HTML/About-SHAKE.html" aria-current="page">About Us</a></li>
       <li><a href="../HTML/Contact-SHAKE.html">Contact</a></li>
     </ul>
   </nav>
 
 
 
-<section id="about">
-  <h2>About Us</h2>
-  <h4>SHAKE, an abbreviation for <b>S<b>tart <b>H<b>ustling <b>A<b>nd <b>K<b>ill <b>E<b>verything, was founded by a group of friends who live by the motto "4's up L's down." We are dedicated to creating exclusive and authentic clothing that reflects the camaraderie amongst lifelong friends. Our mission is to provide the public with high-quality and luxurious streetwear. The dragonfly embodied in our logo symbolizes change, adaptation, and self-realization. The change that we all seek refers to mental and emotional maturity that will allow the deeper meaning of life to reveal itself. Thank you, and remember real hustlers are always welcome!</h4>
+<section id="about" aria-labelledby="about-heading">
+  <article class="about-postcard">
+    <div class="postcard-header">
+      <span>A note from the SHAKE family</span>
+      <span class="postcard-stamp" aria-label="4's up, L's down">4's up<br>L's down</span>
+    </div>
+    <h1 id="about-heading">To the ones who keep going,</h1>
+    <div class="postcard-message">
+      <p>We are SHAKE — <strong>Start Hustling And Kill Everything.</strong> We were founded by a group of friends who live by one motto: “4's up, L's down.”</p>
+      <p>That bond is at the heart of everything we make. We create exclusive, authentic clothing inspired by the camaraderie of lifelong friends, with a mission to bring you high-quality, luxurious streetwear.</p>
+      <p>The dragonfly in our logo stands for change, adaptation, and self-realization. To us, real change is the mental and emotional growth that helps the deeper meaning of life come into view.</p>
+    </div>
+    <p class="postcard-signoff">Thank you. Real hustlers are always welcome.</p>
+    <p class="postcard-signature">— The SHAKE Family</p>
+  </article>
 </section>
 
 <div class="cartTab">
@@ -73,11 +188,9 @@
   <div class="subtotal"><h3></h3></div>
   <div class="btn">
     <button class="close" onclick="closeCart()">CLOSE</button>
-    <button class="checkout" onclick="callPaymentLink();">PROCEED TO CHECKOUT</button>
+    <button class="checkout" onclick="redirectToCheckout();">PROCEED TO CHECKOUT</button>
   </div>
 </div>
-
-</body>
 
 <footer>
   <h4>&copy; 2018 SHAKE - Luxury Streetwear.</h4>
@@ -114,4 +227,8 @@
 
   
 </footer>
+<script src="../scripts/site-footer.js"></script>
+<script src="../scripts/audio-player.js"></script>
+<script src="../scripts/newsletter.js"></script>
+</body>
 </html>

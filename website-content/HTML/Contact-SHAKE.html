@@ -6,16 +6,184 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../CSS/HomePageStyle.css">
   <title>SHAKE - Luxury Streetwear</title>
+  <script src="../scripts/api-calls.js"></script>
   <script src="../scripts/script.js">
   
   </script>
   <style>
-    .contactForm
-    {
-      justify-content: center;
+    .contact-form-container {
+      display: grid;
+      min-height: 620px;
+      place-items: center;
+      padding: clamp(2.5rem, 7vw, 5.5rem) 1.25rem;
+      background:
+        radial-gradient(ellipse at 12% 18%, rgba(232, 73, 70, .1), transparent 34%),
+        #f8f4eb;
+      box-sizing: border-box;
     }
-    
-  
+
+    .contact-card {
+      display: grid;
+      grid-template-columns: minmax(220px, .8fr) minmax(0, 1.2fr);
+      width: min(100%, 980px);
+      overflow: hidden;
+      border: 1px solid rgba(47, 42, 37, .1);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 24px 70px rgba(48, 37, 29, .13);
+    }
+
+    .contact-intro {
+      padding: clamp(2rem, 5vw, 3.5rem);
+      background: #292725;
+      color: #f8f4eb;
+    }
+
+    .contact-eyebrow {
+      margin: 0 0 1rem;
+      color: #f08a82;
+      font: 700 .75rem/1.4 "Segoe UI", Arial, sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .contact-intro h1 {
+      margin: 0 0 1rem;
+      color: #fff;
+      font: 2rem/1.2 White_on_black, "Segoe UI", sans-serif;
+    }
+
+    .contact-intro > p:not(.contact-eyebrow) {
+      color: #d3cec7;
+      font: 400 1rem/1.7 "Segoe UI", Arial, sans-serif;
+    }
+
+    .contact-details {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+
+    .contact-details p {
+      margin: 0;
+      color: #d3cec7;
+      font: 400 .9rem/1.6 "Segoe UI", Arial, sans-serif;
+      overflow-wrap: anywhere;
+    }
+
+    .contact-details strong {
+      display: block;
+      margin-bottom: .2rem;
+      color: #fff;
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .contact-details a {
+      color: #fff;
+      text-decoration-color: #e84946;
+      text-underline-offset: 3px;
+    }
+
+    .contactForm {
+      display: grid;
+      align-content: center;
+      gap: .55rem;
+      padding: clamp(2rem, 5vw, 3.5rem);
+      text-align: left;
+    }
+
+    .contactForm h2 {
+      margin: 0 0 .4rem;
+      color: #292725;
+      font: 1.25rem/1.3 White_on_black, "Segoe UI", sans-serif;
+    }
+
+    .contactForm label {
+      margin-top: .55rem;
+      color: #39342f;
+      font: 650 .85rem/1.4 "Segoe UI", Arial, sans-serif;
+    }
+
+    .contactForm input,
+    .contactForm textarea {
+      width: 100%;
+      min-height: 48px;
+      margin: 0;
+      padding: .8rem .9rem;
+      box-sizing: border-box;
+      border: 1px solid #d9d4cd;
+      border-radius: 8px;
+      background: #fcfbf9;
+      color: #292725;
+      font: 400 .95rem/1.5 "Segoe UI", Arial, sans-serif;
+      transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+
+    .contactForm textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .contactForm input:focus,
+    .contactForm textarea:focus {
+      border-color: #e84946;
+      outline: none;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(232, 73, 70, .13);
+    }
+
+    .contactForm input::placeholder,
+    .contactForm textarea::placeholder {
+      color: #89837b;
+    }
+
+    .contactForm .form-status {
+      min-height: 1.4em;
+      margin: .25rem 0 0;
+      color: #514a43;
+      font: 400 .9rem/1.5 "Segoe UI", Arial, sans-serif;
+    }
+
+    .contactForm .form-status[data-state="error"] {
+      color: #b42318;
+    }
+
+    .contactForm .form-status[data-state="success"] {
+      color: #237a45;
+    }
+
+    .contactForm button[type="submit"] {
+      width: 100%;
+      min-height: 50px;
+      margin: .25rem 0 0;
+      border-radius: 8px;
+      font-size: .9rem;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 700px) {
+      .contact-form-container {
+        min-height: 0;
+        padding: 2rem 1rem;
+      }
+
+      .contact-card {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-details {
+        margin-top: 1.5rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .contactForm input,
+      .contactForm textarea {
+        transition: none;
+      }
+    }
   </style>
 </head>
 
@@ -25,7 +193,10 @@
   <header>
     <div>
       <img src="../../media/logos/SHK-Logo.png" alt="SHK Logo">
-      <div class="cart-icon" onclick="loadCart(); showCart();">🛒 <span id="cartCount">0</span></div>
+      <button type="button" class="cart-icon" aria-label="Open shopping cart">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 4h2l2.1 10.4a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"></path><circle cx="10" cy="20" r="1.2"></circle><circle cx="18" cy="20" r="1.2"></circle></svg>
+        <span id="cartCount">0</span>
+      </button>
     </div>
     <h3>Start Hustling And Kill Everything</h3>
     <script>
@@ -35,7 +206,7 @@
     
   </header>
 
-  <nav>
+  <nav aria-label="Main navigation">
     <ul>
       <li><a href="../HTML/Home-SHAKE.html">Home</a></li>
       <li><a href="../HTML/Shop-SHAKE.html">Shop</a>
@@ -45,34 +216,40 @@
         </ul>
       </li>
       <li><a href="../HTML/About-SHAKE.html">About Us</a></li>
-      <li><a href="../HTML/Contact-SHAKE.html">Contact</a></li>
+      <li><a href="../HTML/Contact-SHAKE.html" aria-current="page">Contact</a></li>
     </ul>
   </nav>
  
 
 
   
-    <div class = "contact-form-container">
-        <div class = "formDiv">
-            <form class="contactForm" action= "mailto: 4showinvestments@gmail.com" method="post" enctype="text/plain">
-                <h2>Contact Us</h2>
-                <p>Email: support@shake.com</p>
-                <p>Instagram: <a href="https://www.instagram.com/shk_shake" target="_blank">@shk_shake</a></p>
+    <main class="contact-form-container">
+      <div class="contact-card">
+        <aside class="contact-intro">
+          <p class="contact-eyebrow">We’re here to help</p>
+          <h1>Let’s talk.</h1>
+          <p>Questions about an order, a product, or SHAKE? Send us a note and our team will be in touch.</p>
+          <div class="contact-details">
+            <p><strong>Email</strong><a href="mailto:support@shake.com">support@shake.com</a></p>
+            <p><strong>Follow along</strong><a href="https://www.instagram.com/shk_shake" target="_blank" rel="noopener noreferrer">@shk_shake</a></p>
+          </div>
+        </aside>
+        <form id="contactForm" class="contactForm" action="../scripts/send-email.php" method="post">
+          <h2>Send us a message</h2>
+          <label for="name">Your name</label>
+          <input type="text" id="name" name="name" maxlength="120" autocomplete="name" placeholder="How should we address you?" required>
 
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-            
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
-            
-                <div style="display: flex; justify-content: center;"><button style="text-align: center;" type="submit" on>Submit</button></div>
-            </form>
-        </div>
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" maxlength="254" autocomplete="email" placeholder="you@example.com" required>
 
-    </div>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" maxlength="10000" placeholder="Tell us how we can help..." required></textarea>
+
+          <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+          <button type="submit">Send message</button>
+        </form>
+      </div>
+    </main>
 
     <div class="cartTab">
       <h1>Shopping Cart</h1>
@@ -96,51 +273,15 @@
       <div class="subtotal"><h3></h3></div>
       <div class="btn">
         <button class="close" onclick="closeCart();">CLOSE</button>
-        <button class="checkout" onclick="callPaymentLink();">PROCEED TO CHECKOUT</button>
+        <button class="checkout" onclick="redirectToCheckout();">PROCEED TO CHECKOUT</button>
       </div>
     </div>
   
 
+<div data-site-footer></div>
+<script src="../scripts/contact-form.js"></script>
+<script src="../scripts/site-footer.js"></script>
+<script src="../scripts/audio-player.js"></script>
+<script src="../scripts/newsletter.js"></script>
 </body>
-
-
-
-
-
-<footer>
-  <h4>&copy; 2018 SHAKE - Luxury Streetwear.</h4>
-  <h4> All rights reserved.</h4>
-  
-  
-  <div class="footerDiv">
-    <div class="left-section">
-      <img src="../../media/logos/HustlersConceptTag.png" alt="Transparent Image"  width="50%">
-    </div>
-  
-    
-    <div class="right-section">
-      <div class="follow-us">
-        <h3 class="follow">Follow us:</h3>
-        <div>
-          <a href="https://www.instagram.com/shk_shake" target="_blank"><img src="../../media/social/instagram.png" alt="Instagram"></a>
-          <a href="#" target="_blank"><img src="../../media/social/twitter_logo.png" alt="Twitter"></a>
-          <a href="https://www.tiktok.com/@ashake18_" target="_blank"><img src="../../media/social/tiktok_logo.png" alt="TikTok"></a>
-          <a href="#" target="_blank"><img src="../../media/social/facebook_logo.png" alt="Facebook"></a>
-        </div>
-
-      </div>
-  
-      <div class="subscribe">
-        <label for="email">Subscribe to our newsletter:</label>
-        <input type="email" id="email" name="email" placeholder="Your email">
-        <label for="phone">Subscribe via phone:</label>
-        <input type="tel" id="phone" name="phone" placeholder="Your phone number">
-        <button type="submit">Subscribe</button>
-      </div>
-    </div>
-
-  </div>
-
-  
-</footer>
 </html>
