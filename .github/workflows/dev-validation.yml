@@ -1,0 +1,27 @@
+name: SHAKE development validation
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate website source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          files=list(Path('website-content/HTML').glob('*.html'))
+          assert files, 'No HTML files found'
+          assert list(Path('website-content/CSS').glob('*.css')), 'No CSS files found'
+          for f in files:
+              HTMLParser().feed(f.read_text(encoding='utf-8'))
+              print(f)
+          PY
+      - name: Reject merge conflict markers
+        run: |
+          if grep -RnE '^(<<<<<<< |=======|>>>>>>> )' website-content --include='*.html' --include='*.css' --include='*.js'; then exit 1; fi
