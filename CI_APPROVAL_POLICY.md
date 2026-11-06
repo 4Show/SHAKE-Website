@@ -15,4 +15,4 @@
 The workflow in this PR adds **non-deploying** automated checks. It does not alter Vercel, Square, Supabase, AWS, production hosting or GitHub environment protection. Confirm CI succeeds, then enable required checks and reviewer settings before merging. If checks fail because of pre-existing formatting or build issues, fix those on the PR rather than bypassing the gate.
 
 ## Repository focus
-Static storefront and Terraform checks; existing CodeQL continues. Square API tests require a mockable API client before adding them.
+Static storefront checks; existing CodeQL continues. The legacy `shake-aws-iac/` Terraform code is archived in place and is not executed, validated or deployed by CI. Square API tests require a mockable API client before adding them.

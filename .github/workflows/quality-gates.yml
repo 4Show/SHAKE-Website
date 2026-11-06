@@ -27,9 +27,3 @@ jobs:
       - name: Check for merge conflict markers
         run: |
           if grep -RnE '^(<<<<<<< |=======|>>>>>>> )' website-content --include='*.html' --include='*.css' --include='*.js'; then exit 1; fi
-  terraform:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform fmt -check -recursive shake-aws-iac
